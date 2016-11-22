@@ -1,0 +1,174 @@
+{literal}<script>$(document).ready(function() {
+
+	//define chart colors ( you maybe add more colors if you want or flot will add it automatic )
+ 	var chartColours = ['#62aeef'];
+
+ 	//generate random number for charts
+	randNum = function(){
+		return (Math.floor( Math.random()* (1+40-20) ) ) + 20;
+	}
+
+
+ 	//check if element exist and draw chart
+	if($(".chart").length) {
+		$(function () {
+			var d1 = [];
+			{/literal}{section name=sec loop=$stats}
+			d1.push([new Date('{$stats[sec].date|date_format:"%D"}').getTime(),{$stats[sec].solde}]);
+			{/section}{literal};
+			
+			//here we generate data for chart
+			/*for (var i = 0; i < 28; i++) {
+				d1.push([new Date(Date.today().add(i).months()).getTime(),randNum()+i+i]);
+				
+			}*/
+			var chartMinDate = d1[0][0]; //first day
+    		var chartMaxDate = d1[27][0];//last day
+
+		    //graph options
+			var options = {
+					grid: {
+						show: true,
+					    aboveData: true,
+					    color: "#3f3f3f" ,
+					    labelMargin: 5,
+					    axisMargin: 0, 
+					    borderWidth: 0,
+					    borderColor:null,
+					    minBorderMargin: 5 ,
+					    clickable: true, 
+					    hoverable: true,
+					    autoHighlight: true,
+					    mouseActiveRadius: 100
+					},
+			        series: {
+			            lines: {
+		            		show: true,
+		            		fill: true,
+		            		lineWidth: 2,
+		            		steps: false
+			            	},
+			            points: {
+			            	show:true,
+			               	radius: 2.8,
+			            	symbol: "circle",
+			            	lineWidth: 2.5
+			            }
+			        },
+			        legend: { 
+			        	position: "ne", 
+			        	margin: [0,-25], 
+			        	noColumns: 0,
+			        	labelBoxBorderColor: null,
+						width: 40,
+						height: 1
+			    	},
+			        colors: chartColours,
+			        shadowSize:0,
+			        tooltip: true, //activate tooltip
+					tooltipOpts: {
+						content: "%s : %y.0 &euro;",
+						xDateFormat: "%d/%m",
+						shifts: {
+							x: -30,
+							y: -50
+						},
+						defaultTheme: false
+					},
+					yaxis: { min: {/literal}{$stats[0].solde/1.05}{literal}},
+					xaxis: { 
+			        	mode: "time",
+						tickOptions: {formatString: '%#d'},
+						tickInterval: 1,
+			        	minTickSize: [1, "day"],
+			        	timeformat: "%m/%y",
+			        	min: chartMinDate,
+			        	max: chartMaxDate
+			        }
+			};  
+			var plot = $.plot($(".chart"),
+	           [{
+	    			label: "Solde", 
+	    			data: d1,
+	    			lines: {fillColor: "#f3faff"},
+	    			points: {fillColor: "#fff"}
+	    		}], options);
+		});
+	}//End .chart if  
+});</script>{/literal}
+<div class="wrapper">
+   <!--<div class="crumb">
+      <ul class="breadcrumb">
+         <li><a href="#"><i class="icon16 i-home-4"></i>Accueil</a></li>
+         <li class="active">Panorama</li>
+      </ul>
+   </div>-->
+   <div class="container-fluid">
+      <div id="heading" class="page-header">
+         <h1><i class="icon20 i-stats-up"></i>{$form.nom}</h1>
+      </div>
+      <div class="row">
+         <div class="col-lg-12">
+            <div class="panel panel-default">
+               <div class="panel-heading">
+                  <div class="icon"><i class="icon20 i-table"></i></div>
+                  <h4>Liste des comptes</h4>
+                  <a href="#" class="minimize"></a>
+               </div>
+               <!-- End .panel-heading -->
+               <div class="panel-body">
+                  <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-hover" id="dataTable">
+                     <thead>
+                        <tr>
+                           <th>Banque</th>
+                           <th>Intitulé du compte</th>
+                           <th>N° compte</th>
+                           <th>Solde</th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        {section name=sec loop=$data step=-1}
+                        <tr>
+                           <td>{$data[sec].banque}</td>
+                           <td><a href="comptes.php?id={$data[sec].id_compte}">{$data[sec].intitule}</a></td>
+                           <td class="center">{$data[sec].num_cpt}</td>
+                           <td>{$data[sec].courant|number_format:2:",":" "} &euro;</td>
+                        </tr>
+                        {/section}
+                     <tfoot>
+                        <tr>
+                           <th colspan="3">Cumul</th>
+                           <th>{$total|number_format:2:",":" "} &euro;</th>
+                        </tr>
+                     </tfoot>
+                     </tbody>
+                  </table>
+               </div>
+               <!-- End .panel-body -->
+            </div>
+            <!-- End .widget -->
+         </div>
+         <!-- End .row-fluid  -->
+      </div>
+      <!-- End .row-fluid  -->
+      <div class="row">
+         <div class="col-lg-12">
+            <div class="panel panel-default">
+		   <!-- GRAPH -->
+				<div class="panel-heading">
+					<div class="icon"><i class="icon20 i-stats"></i></div>
+					<h4>Evolution du solde</h4>
+					<a href="#" class="minimize"></a>
+				</div><!-- End .panel-heading -->
+			
+				<div class="panel-body">
+					<div class="chart" style="width: 100%; height:250px;margin-top:10px;"></div>
+				</div><!-- End .panel-body -->
+         </div>
+         <!-- End .col-lg-12  -->       
+         <!--{section name=sec loop=$stats}{$stats[sec].date} - {$stats[sec].solde|number_format:2:".":""}<br/>{/section}-->
+   </div>
+   <!-- End .row-fluid  -->
+</div>
+<!-- End .container-fluid  -->
+</div> <!-- End .wrapper  -->

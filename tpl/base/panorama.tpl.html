@@ -1,0 +1,52 @@
+<script type="text/javascript" src="libs/jqplot/js/jquery.jqplot.min.js"></script>
+<script type="text/javascript" src="libs/jqplot/js/jqplot.categoryAxisRenderer.min.js"></script>
+<script type="text/javascript" src="libs/jqplot/js/jqplot.pieRenderer.min.js"></script>
+<script type="text/javascript" src="libs/jqplot/js/jqplot.barRenderer.min.js"></script>
+<script type="text/javascript" src="libs/jqplot/js/jqplot.highlighter.min.js"></script>
+<link rel="stylesheet" type="text/css" href="libs/jqplot/css/jquery.jqplot.min.css" media="screen" />
+
+<div class="titre">{$form.nom}</div>
+<div id="tab">
+{if $data}
+	<table id="tablist">
+	 <tr>
+		<th>Banque</th>
+		<th>Intitulé du compte</th>
+		<!--<th>NÂ°</th>-->
+		<th>Solde</th>
+	 </tr>
+	{section name=sec loop=$data step=-1}
+	  <tr class="{cycle values="odd,even"}">
+		<td width="1%" align="left" nowrap="nowrap">{$data[sec].banque}</td>
+		<td width="96%" align="left" nowrap="nowrap"><a href="comptes.php?id={$data[sec].id_compte}">{$data[sec].intitule}</a></td>
+		<!--<td width="1%" align="left" nowrap="nowrap">{$data[sec].num_cpt}</td>-->
+		<td width="1%" align="right" nowrap="nowrap">{$data[sec].courant|number_format:2:",":" "} &euro;</td>
+	  </tr>
+	{/section}
+	 <tr class="odd">
+		<td colspan="2" class="cumul">Cumul</td>
+		<td nowrap="nowrap" class="cumul">{$total|number_format:2:",":" "} &euro;</td>
+	 </tr>
+	</table>
+	<br/>
+{/if}
+{literal}<script type="text/javascript">
+$(function () {
+	line1 = [{/literal}{section name=sec loop=$stats}{$stats[sec].solde|number_format:2:".":""},{/section}{literal}];
+	plot2 = $.jqplot('chart_bar', [line1], {
+	    legend:{show:false, location:'fr', xoffset:15},
+	    title:'Evolution du solde',
+		axes:{
+	        xaxis:{
+        	    renderer:$.jqplot.CategoryAxisRenderer, 
+	            ticks:[{/literal}{section name=sec loop=$stats}'{$stats[sec].date}',{/section}{literal}]
+	        }, 
+	        yaxis:{autoscale:true, min:200, tickInterval: 10, tickOptions:{formatString:'%.0fK&euro;'}}
+			
+	    },
+		highlighter: { show: true, sizeAdjust: 10,  tooltipAxes: 'y' }
+	});
+});
+</script>{/literal}
+    <center><div id="chart_bar" style="height:500px;width:1000px; "></div></center>
+</div>

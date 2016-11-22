@@ -1,0 +1,28 @@
+<div class="titre">{$form.nom}</div>
+<div id="tab">
+	<form name="action_form" method="post" action="docs_pdf.php">
+	<input name="action" type="hidden" value="{$form.action}" />
+	<div id="form">
+		<div class="item">
+		 <label>Compte</label>
+        <select name="compte_id" id="select">
+            {section name=sec loop=$comptes}
+			<option label="{$comptes[sec].banque} - {$comptes[sec].nom}" value="{$comptes[sec].id_compte}">{$comptes[sec].banque} - {$comptes[sec].nom}</option>
+            {/section}
+        </select>
+		</div>
+		<div class="item">
+		 <label>Début</label>
+		 <input type="text" maxlength="10" name="debut" size="10" value="2009-01-01"/>
+		</div>
+		<div class="item">
+		 <label>Fin</label>
+		 <input type="text" maxlength="10" name="fin" size="10" value="2009-03-31"/>
+		</div>
+	<br />
+		<div align="right">
+		<a href="javascript:document.action_form.submit();" class="submit_btn"></a>
+		</div>
+	</div>
+	</form>
+</div>

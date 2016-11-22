@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+<head>
+<title>{$title}</title>
+<meta http-equiv=Content-rubrique content="text/html; charset=iso-8859-1" />
+<meta http-equiv="Expires" content="-1" />
+<meta http-equiv="Pragma" content="no-cache" />
+<link rel="shortcut icon" type="image/png" href="favicon.png" />
+<link rel="stylesheet" href="{$tpl}/css/layout.css" type="text/css" /> 
+<link rel="stylesheet" href="{$tpl}/css/styles.css" type="text/css" /> 
+<script type="text/javascript" src="js/jquery-1.2.6.pack.js"></script>
+<script type="text/javascript" src="js/custom.js"></script>
+</head>
+<body>
+<div id="container">
+	<div id="header" class="bloc">
+		{include file="header.tpl.html"}
+	</div>
+	<div id="main_wide" class="bloc">
+		{include file="$content"}
+	</div>
+	<div id="footer" class="bloc">
+		{include file="footer.tpl.html"}
+	</div>
+</div>
+{if $msg}<div id="msg" class="message">{$msg}</div>{/if}
+{if $debug}<div id="debug" class="debug">{$debug}</div>{/if}
+{if $erreur}<div id="erreur" class="erreur">{$erreur}</div>{/if}
+</body>
+</html>

@@ -1,0 +1,430 @@
+/** 
+  * @project		Dinero 1.0 
+  * @author			Olivier Gaillard <ogaillard63@gmail.com>
+  * @version		1.0 du 01/01/2009
+  * @lastmod		14/10/2014
+  * @desc	   		Feuille de styles du gabarit de site
+  */
+  
+/* ------- Mise en page -------*/
+#wrapper {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	overflow: hidden;
+}
+
+#header {
+	position: absolute;
+	width: auto;
+	height: 66px;
+	top: 4px;
+	right: 4px;
+	bottom: auto;
+	left: 4px;
+}
+
+#menu {
+	position: absolute;
+	width: 140px;
+	height: auto;
+	top: 86px;
+	right: auto;
+	bottom: 30px;
+	left: 4px;
+}
+
+#main,#main_wide {
+	position: absolute;
+	width: auto;
+	height: auto;
+	top: 86px;
+	right: 4px;
+	bottom: 30px;
+}
+
+#main {
+	left: 160px;
+}
+
+#main_wide {
+	left: 4px;
+}
+
+#tab,#tab_search {
+	position: absolute;
+	width: auto;
+	height: auto;
+	top: 38px;
+	right: 6px;
+	left: 6px;
+	overflow: auto;
+}
+
+#tab {
+	bottom: 6px;
+}
+
+#tab_search {
+	bottom: 44px;
+}
+
+#search {
+	position: absolute;
+	width: auto;
+	height: auto;
+	bottom: 10px;
+	right: 6px;
+}
+
+#search input {
+	padding: 2px;
+	margin-right: 5px;
+}
+
+#footer {
+	position: absolute;
+	font-size: 0.8em;
+	width: auto;
+	height: 12px;
+	top: auto;
+	right: 4px;
+	bottom: 2px;
+	left: 4px;
+}
+
+.bloc {
+	height: auto;
+	background: #FFF url("img/bg_box.gif") repeat-x top left;
+	padding: 6px;
+	margin-bottom: 3px;
+	border: 1px solid #CCC;
+}
+/* ----------------------------------------- Boutons ------------------------------------ */
+a.search_btn,a.submit_btn,a.save_btn,a.cancel_btn {
+	width: 120px;
+	height: 29px;
+	display: inline-block;
+}
+
+a.search_btn {
+	background: url("img/search_btn.gif") no-repeat left top;
+}
+
+a.submit_btn {
+	background: url("img/submit_btn.gif") no-repeat left top;
+}
+
+a.save_btn {
+	background: url("img/save_btn.gif") no-repeat left top;
+}
+
+a.cancel_btn {
+	background: url("img/cancel_btn.gif") no-repeat left top;
+}
+
+a.search_btn:hover,a.submit_btn:hover,a.save_btn:hover,a.cancel_btn:hover
+	{
+	background-position: left bottom;
+}
+/* ------------------------------- Mise en forme des menus ------------------------------ */
+.navigation {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	color: #202223;
+	width: 100%;
+	font-size: 0.9em;
+	font-weight: bold;
+}
+
+.navigation a,.navigation span {
+	display: block;
+	text-transform: uppercase;
+	padding: 8px 4px 1px 4px;
+	text-decoration: none;
+	border-bottom: 4px solid #CCC;
+}
+
+.navigation .toggleSubMenu a,.navigation .toggleSubMenu span {
+	
+}
+
+.navigation .open a,.navigation .open span {
+	
+}
+
+.navigation a:hover,.navigation a:focus,.navigation a:active {
+	background-color: #FFF;
+	text-decoration: none;
+}
+
+.navigation .subMenu {
+	list-style: none;
+	display: block;
+	font-size: 1.1em;
+	margin-top: 5px;
+	padding: 0;
+}
+
+.navigation ul.subMenu a {
+	color: #202223;
+	background: #FFF url("img/menu_fond.gif") repeat-x top left;
+	text-transform: uppercase;
+	font-size: 0.9em;
+	font-weight: bold;
+	text-align: center;
+	padding: 3px 0;
+	margin-bottom: 6px;
+	border: 1px solid #DDD;
+}
+
+.navigation ul.subMenu a:hover {
+	color: #c00;
+}
+/* ------------------------------- Page d'identification ------------------------------ */
+#loginbox form {
+	border: none;
+}
+
+#loginbox {
+	position: absolute;
+	height: 212px;
+	width: 406px;
+	margin: -10px 0px 0px -200px;
+	top: 20%;
+	left: 50%;
+	text-align: left;
+	padding: 5px;
+	background: #FFF url("img/login_fond.gif") repeat-x bottom left;
+	border: 1px solid #EDEDED;
+	overflow: hidden;
+}
+
+#loginbox p {
+	margin: 10px;
+}
+
+#loginbox .logo {
+	display: block;
+	width: 40px;
+	height: 52px;
+	background: url("img/lock.png") no-repeat;
+	overflow: hidden;
+	text-indent: -3000px;
+	position: absolute;
+	left: 345px;
+	top: 6px;
+}
+
+#loginbox h2 {
+	text-transform: uppercase;
+	font-size: 2em;
+	padding-top: 14px;
+	margin: 8px 10px;
+	border-bottom: 2px solid #DDD;
+}
+
+#loginbox input {
+	color: #666;
+	padding: 2px;
+	font-size: 1em;
+	font-weight: normal;
+	border: 1px solid #CCC;
+}
+
+#loginbox .item {
+	margin: 2px 0;
+	padding: 2px 0;
+	clear: both;
+}
+
+#loginbox label {
+	display: inline-block;
+	font-size: 1em;
+	padding: 2px 8px;
+	margin: 0px 3px;
+}
+/* -------------------------------------------------------------------------------------------- */
+.message,.erreur {
+	position: absolute;
+	width: auto;
+	min-width: 220px;
+	height: auto;
+	top: 10px;
+	right: 10px;
+	bottom: auto;
+	left: auto;
+	z-index: 1000;
+	padding: 12px 50px;
+	text-align: left;
+	font-size: 1em !important;
+	display: none;
+}
+
+.message {
+	color: #000;
+	background: #9efc88 url("img/success.gif") 10px 50% no-repeat;
+	/*border: 1px solid #60a400;*/
+}
+
+.erreur {
+	color: #000;
+	background: #ffe3e1 url("img/error.gif") 10px 50% no-repeat;
+	/*border: 1px solid #f14545;*/
+}
+
+#loading_box {
+	position: absolute;
+	height: auto;
+	width: 290px;
+	font-size: 1.5em;
+	line-height: 140%;
+	border: 3px solid #EDEDED;
+	background-color: #C33;
+	font-weight: bold;
+	color: #FFF;
+	margin: -120px 0px 0px -125px;
+	top: 50%;
+	left: 50%;
+	padding: 10px;
+	text-align: center;
+	overflow: hidden;
+}
+
+.positif {
+	color: #00AA00;
+}
+
+.negatif {
+	color: #FF0033;
+}
+
+.debug {
+	background: #333 url("img/debug.gif") no-repeat bottom right;
+	font-family: "Courier New", Courier, monospace;
+	position: absolute;
+	text-align: left;
+	font-size: 0.9em;
+	bottom: 50px;
+	right: 5px;
+	width: 500px;
+	color: #000;
+	background-color: #FFF000;
+	border: 1px solid #868141;
+	padding: 10px 10px 20px 10px;
+}
+/* -------------------------------------------------------------------------------------------- */
+ul.tabs {
+	margin: 0;
+	padding: 0;
+	float: left;
+	list-style: none;
+	height: 22px;
+	border-bottom: 1px solid #999;
+	border-left: 1px solid #999;
+	width: 99%;
+}
+
+ul.tabs li {
+	float: left;
+	margin: 0;
+	padding: 0;
+	height: 21px;
+	line-height: 21px;
+	border: 1px solid #999;
+	border-left: none;
+	margin-bottom: -1px;
+	background: #e0e0e0;
+	overflow: hidden;
+	position: relative;
+}
+
+ul.tabs li a {
+	text-decoration: none;
+	color: #000;
+	display: block;
+	font-size: 0.9em;
+	padding: 0 20px;
+	border: 1px solid #fff;
+	outline: none;
+}
+
+ul.tabs li a:hover {
+	background: #ccc;
+}
+
+html ul.tabs li.active,html ul.tabs li.active a:hover {
+	background: #fff;
+	border-bottom: 1px solid #fff;
+}
+
+.tab_container {
+	border: 1px solid #999;
+	border-top: none;
+	clear: both;
+	float: left;
+	width: 99%;
+	background: #fff;
+}
+
+.tab_content {
+	padding: 1px;
+}
+/* -------------------------------------------------------------------------------------------- */
+.odd {
+	background-color: #F0F0F0;
+}
+
+.even {
+	background-color: #E5E5E5;
+}
+
+table tr.odd {
+	background-image: none;
+	background-color: #F0F0F0;
+	text-align: left;
+}
+
+table tr.even {
+	background-image: none;
+	background-color: #E5E5E5;
+	text-align: left;
+}
+
+.odd:hover,.even:hover,.hover {
+	background-color: #ccccff;
+	color: #000000;
+}
+
+.message,.erreur {
+	position: absolute;
+	width: auto;
+	min-width: 220px;
+	height: auto;
+	top: 10px;
+	right: 10px;
+	bottom: auto;
+	left: auto;
+	z-index: 1000;
+	padding: 6px 20px 6px 50px;
+	text-align: left;
+	font-size: 1.5em !important;
+	font-weight: bold;
+	display: none;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+}
+
+.message {
+	color: #333;
+	background: #eff4d4 url('img/success.gif') 10px 50% no-repeat;
+	border: 3px solid #669933;
+}
+
+.erreur {
+	color: #000;
+	background: #efcec9 url('img/error.gif') 10px 50% no-repeat;
+	border: 3px solid #f14545;
+}

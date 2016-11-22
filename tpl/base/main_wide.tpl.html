@@ -1,0 +1,19 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<title>{$titre} - {$application}</title>
+		<meta http-equiv=Content-rubrique content="text/html; charset=UTF-8" />
+		<meta http-equiv="Expires" content="-1" />
+		<meta http-equiv="Pragma" content="no-cache" />
+		<link rel="shortcut icon" type="image/png" href="favicon.png" />
+		<link rel="stylesheet" type="text/css" href="{$tpl}/css/layout.css" media="screen" />
+		<link rel="stylesheet" type="text/css" href="{$tpl}/css/dinero.css" media="screen" title="default" />
+	</head>
+	<body>
+		<div id="container">
+			<div id="header" class="bloc">{include file="header.tpl.html"}</div>
+			<div id="main_wide" class="bloc">{include file="$content"}</div>
+			<div id="footer" class="bloc">{include file="footer.tpl.html"}</div>
+		</div>
+	</body>
+</html>

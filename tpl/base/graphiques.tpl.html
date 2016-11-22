@@ -1,0 +1,46 @@
+<script type="text/javascript" src="libs/jqplot/js/jquery.jqplot.min.js"></script>
+<script type="text/javascript" src="libs/jqplot/js/jqplot.categoryAxisRenderer.min.js"></script>
+<script type="text/javascript" src="libs/jqplot/js/jqplot.pieRenderer.min.js"></script>
+<script type="text/javascript" src="libs/jqplot/js/jqplot.barRenderer.min.js"></script>
+<link rel="stylesheet" type="text/css" href="libs/jqplot/css/jquery.jqplot.min.css" media="screen" />
+{literal}<script type="text/javascript">
+$(function () {
+	
+	//Tabs - Default Action
+	$(".tab_content").hide(); //Hide all content
+	$("ul.tabs li:first").addClass("active").show(); //Activate first tab
+	$(".tab_content:first").show(); //Show first tab content
+	
+	//On Click Event
+	$("ul.tabs li").click(function() {
+		$("ul.tabs li").removeClass("active"); //Remove any "active" class
+		$(this).addClass("active"); //Add "active" class to selected tab
+		$(".tab_content").hide(); //Hide all tab content
+		var activeTab = $(this).find("a").attr("href"); //Find the rel attribute value to identify the active tab + content
+		$(activeTab).fadeIn(); //Fade in the active content
+		return false;
+	});
+	
+	// Graphs
+	data_pie = [{/literal}{section name=pie loop=$data}['{$data[pie].librub}',{$data[pie].total}], {/section}];{literal}
+	plot2 = $.jqplot('chart_pie', [data_pie], {
+	    title: 'ING COURANT', grid:{shadow:false, borderWidth:0}, seriesDefaults:{renderer:$.jqplot.PieRenderer, rendererOptions:{sliceMargin:15}}, legend:{show:true}
+	});
+});
+</script>{/literal}
+
+<div class="titre">{$form.nom}</div>
+	<div id="tab" class="container">
+		<ul class="tabs">
+			{section name=i loop=$comptes}
+			<li><a href="#tab{$comptes[i].id_compte}">{$comptes[i].intitule}</a></li>
+			{/section}
+		</ul>
+		<div class="tab_container">
+			{section name=i loop=$comptes}
+			<div id="tab{$comptes[i].id_compte}" class="tab_content">
+				<center><br /><div id="chart_pie" style="height:600px;width:700px; "></div></center>
+			</div>
+	{/section}
+	</div>
+</div>

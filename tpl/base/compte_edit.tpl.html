@@ -1,0 +1,39 @@
+<div class="titre">{$form.nom}</div>
+<div id="tab">
+	<form name="action_form" method="post" action="params.php">
+		<input name="id" type="hidden" value="{$data.id_compte}" /> <input
+			name="action" type="hidden" value="{$form.action}" />
+		<div id="form">
+			<div class="item">
+				<label>Intitulé</label>
+					<input type="text" maxlength="32" name="intitule" size="32" value="{$data.intitule}" />
+			</div>
+			<div class="item">
+				<label>Banque</label>
+				{html_options name=banque_id options=$banques selected=$data.banque_id}
+			</div>
+			<div class="item">
+				<label>N° de compte</label>
+					<input type="text" maxlength="32" name="num_cpt" size="32" value="{$data.num_cpt}" />
+			</div>
+			<div class="item">
+				<label>Ordre</label> <input type="text" maxlength="3" name="ordre" size="3" value="{$data.ordre}" />
+			</div>
+			<div class="item">
+				<label>Etat</label>
+				<select id="etat" name="etat">
+					<option value="1" {if $data.etat eq 1} selected{/if}>ACTIF</option>
+					<option value="0" {if $data.etat eq 0} selected{/if}>INACTIF</option>
+				</select>
+			</div>
+			<div class="item">
+				<label>Solde initial</label> <input type="text" maxlength="16" name="initial" size="16" value="{$data.initial}" />
+			</div>
+			<br />
+			<div align="right">
+				<a href="javascript:document.action_form.submit();" class="save_btn"></a>
+				&nbsp;<a href="javascript:history.go(-1);" class="cancel_btn"></a>
+			</div>
+		</div>
+	</form>
+</div>

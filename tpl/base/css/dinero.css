@@ -1,0 +1,196 @@
+/**
+ * @project		Framework 1.0
+ * * @author		Olivier Gaillard <olivier.gaillard@larep.com>
+ * @version		1.0 du 01/01/2009
+ * @lastmod		01/01/2010 00:59
+ * @desc	   	Feuille de styles
+ */
+ /* Définitions générales */
+body {
+    color: #202223;
+    background-color: #DDE;
+    font-family: Arial, Helvetica, sans-serif;
+	font-size: 80%;
+    margin: 0;
+    padding: 0;
+}
+
+#header .tab_header {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+h1 {
+    font-size: 2em;
+    font-weight: bold;
+    padding: 0;
+    margin: 0;
+}
+
+h3 {
+    color: #002022236;
+    font-weight: normal;
+    font-size: 1em;
+}
+
+a {
+    color: #202223;
+}
+
+a:hover {
+    color: #DD0000;
+}
+
+img {
+    border: none;
+}
+
+.titre,.titre_left,.titre_right {
+    background: #FFF url("img/menu_fond.gif") repeat-x top left;
+    text-transform: uppercase;
+    font-size: 1em;
+    font-weight: bold;
+    text-align: center;
+    padding: 3px 0;
+    margin-bottom: 3px;
+    border: 1px solid #DDD;
+}
+
+.titre a,.titre_right a {
+    text-decoration: none;
+}
+
+.titre_left {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    right: 174px;
+    width: auto;
+}
+
+.titre_right {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 160px;
+}/* Formulaires */form {
+    padding: 4px;
+}
+
+form input,select,textarea {
+    color: #202223;
+    background-color: #EDEDED;
+    font-size: 1em;
+    border: 1px solid #CCC;
+    padding: 2px;
+}
+
+form .item {
+    margin: 2px 0;
+    padding: 2px 0;
+    clear: both;
+}
+
+form label {
+    display: inline;
+    background-color: #AAA;
+    color: #FFF;
+    float: left;
+    font-size: 1em;
+    width: 180px;
+    padding: 3px 8px;
+    margin: 0px 3px;
+}
+
+form .btn_save {
+    background: url("img/save_btn.gif") no-repeat left top;
+    width: 120px;
+    height: 32px;
+}
+
+form .btn_submit {
+    background: url("img/submit_btn.gif") no-repeat left top;
+    width: 120px;
+    height: 32px;
+}
+
+form .btn_cancel {
+    background: url("img/cancel_btn.gif") no-repeat left top;
+    width: 120px;
+    height: 32px;
+}
+
+form .btn_save:hover,form .btn_submit:hover,form .btn_cancel:hover {
+    background-position: left bottom;
+}/* Tableaux des listes */table#tablist,table#tabinfos {
+    margin: 0;
+    background-color: #EDEDED;
+    border-spacing: 1px;
+}
+
+table#tablist {
+    width: auto;
+}
+
+table#tablist th,table#tabinfos th {
+    text-transform: uppercase;
+    font-size: 0.8em;
+    text-align: center;
+    background-color: #202223;
+    color: #FFF;
+    padding: 5px 8px;
+    white-space: nowrap;
+}
+table#tablist td.cumul {
+	background-color: #ffffcc;
+	font-size:1.3em;
+	color:#990000;
+}
+table#tablist td,table#tabinfos td {
+    font-weight: bold;
+    font-size: 0.85em;
+    padding: 3px 8px;
+}
+
+table#tabinfos td {
+    font-size: 1em;
+    background-color: #EDEDED;
+}
+
+table#tablist td.sect {
+    padding: 2px 3px 0 3px;
+    font-weight: bold;
+}
+
+table#tablist tr.tr-light {
+    background-color: #F8F8FF;
+}
+
+table#tablist tr.tr-dark {
+    background-color: #F4F4FF;
+}
+
+table#tablist a {
+    text-decoration: none;
+}
+
+fieldset {
+    border: 1px solid #CCC;
+    padding: 2px;
+}
+
+legend {
+    text-color: #AAA;
+    font-size: 0.8em;
+    font-style: italic;
+    padding: 0 3px;
+}
+/* -------------------------- */
+.infos {
+    color: #003399;
+    font-size: 0.8em;
+    padding: 3px 10px;
+    line-height: 130%;
+}
+

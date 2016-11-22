@@ -1,0 +1,32 @@
+<div class="titre_left">{$form.nom}</div>
+<div class="titre_right"><a href="params.php?action={$form.action}" title="{$form.title}">{$form.bouton}</a></div>
+<div id="tab">
+{if $data}
+	<table id="tablist">
+	 <tr>
+		<th>Intitulé</th>
+		<th>Numéro</th>
+		<th>Banque</th>
+		<th>User Id</th>
+		<th>Solde initial</th>
+		<th>Solde courant</th>
+		<th>Ordre</th>
+		<th>Etat</th>
+		<th>Action</th>
+	 </tr>
+	{section name=sec loop=$data}
+	  <tr class="{cycle values="tr-light,tr-dark"}">
+		<td width="94%" align="left" nowrap><a href="params.php?action=edit_compte&id={$data[sec].id_compte}">{$data[sec].intitule}</a></td>
+		<td width="1%" align="left" nowrap="nowrap"><a href="params.php?action=edit_compte&id={$data[sec].id_compte}">{$data[sec].num_cpt}</a></td>
+		<td width="1%" align="left" nowrap="nowrap"><a href="params.php?action=edit_compte&id={$data[sec].id_compte}">{$data[sec].etablissement}</a></td>
+		<td width="1%" align="center" nowrap="nowrap"><a href="params.php?action=edit_compte&id={$data[sec].id_compte}">{$data[sec].user_id}</a></td>
+		<td width="1%" align="right" nowrap="nowrap"><a href="params.php?action=edit_compte&id={$data[sec].id_compte}">{$data[sec].initial} &euro;</a></td>
+		<td width="1%" align="right" nowrap="nowrap"><a href="params.php?action=edit_compte&id={$data[sec].id_compte}">{$data[sec].courant} &euro;</a></td>
+		<td width="1%" align="center" nowrap="nowrap"><a href="params.php?action=edit_compte&id={$data[sec].id_compte}">{$data[sec].ordre}</a></td>
+		<td width="1%" align="center" nowrap="nowrap"><a href="params.php?action=edit_compte&id={$data[sec].id_compte}">{$data[sec].etat}</a></td>
+		<td width="1%" align="center" nowrap="nowrap"><a href="params.php?action=edit_compte&id={$data[sec].id_compte}">X</a></td>
+	  </tr>
+	{/section}
+	</table>
+	{/if}
+</div>

@@ -1,0 +1,73 @@
+{literal}<script type="text/javascript" charset="utf-8">
+$(function() { 
+    $('#myTab a').click(function (e) {
+        window.location = $(this).attr("href");
+    });
+});
+</script>{/literal}
+<div class="wrapper">
+   <!--<div class="crumb">
+      <ul class="breadcrumb">
+         <li><a href="#"><i class="icon16 i-home-4"></i>Accueil</a></li>
+         <li class="active">Panorama</li>
+      </ul>
+   </div>-->
+   <div class="container-fluid">
+      <div id="heading" class="page-header">
+         <h1><i class="icon20 i-stats-up"></i>Liste des opérations</h1>
+      </div>
+      <div class="row">
+         <div class="col-lg-12">
+		 <div class="panel panel-default">
+               <div class="panel-heading">
+                  <div class="icon"><i class="icon20 i-cube"></i></div>
+                  <h4>{$infos.banque} - {$infos.intitule}</h4>
+                  <a href="#" class="minimize"></a>
+				  <div class="w-right">Solde au {$data[0].date|date_format:"%d/%m/%Y"} : <strong>{$infos.courant|number_format:2:",":" "}&nbsp;&euro;</strong></div>
+				  <!--<div class="w-right">
+					<form class="form-horizontal" role="form">
+						<input type="hidden" name="id" value="{$compte_id}">
+						<input type="text" class="search-query col-lg-12 form-control" placeholder="Rechercher" name="query">
+					</form>
+				  </div>-->
+               </div>
+               <!-- End .panel-heading -->
+               <div class="panel-body">
+			   <ul id="myTab" class="nav nav-tabs">
+					{section name=i loop=$annees step=-1}
+					<li{if $annee eq $annees[i].an} class="active"{/if}><a href="{if $annee eq $annees[i].an}#{else}comptes.php?id={$compte_id}&annee={$annees[i].an}{/if}" data-toggle="tab">{$annees[i].an}</a></li>
+					{/section}
+				</ul>
+                  <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-hover" id="dataTable">
+                     <thead>
+                        <tr>
+                           <th>&nbsp;</th>
+							<th>Date</th>
+							<th>Rubrique</th>
+							<th>Libelle</th>
+							<!--<th>Commentaire</th>-->
+							<th>Débit</th>
+							<th>Crédit</th>
+                        </tr>
+                     </thead>
+                     <tbody>
+						{section name=sec loop=$data}
+						  <tr{if $data[sec].import eq '1'} style="background-color:#cfffc0;"{/if}>
+							<td align="center"><a href="comptes.php?action=pointage&etat={$data[sec].pointage}&id={$data[sec].id_transaction}" title="Pointage de la transaction"><img src="tpl/base/css/img/stat{$data[sec].pointage}.jpg"></a></td>
+							<td align="left"><a href="comptes.php?action=edit&id={$data[sec].id_transaction}" title="{$data[sec].libelle}">{$data[sec].date|date_format:"%d/%m/%Y"}</a></td>
+							<td align="left"{if $data[sec].montant>0} style="color:#009900"{/if}>{$data[sec].librub}</td>
+							<td align="left"{if $data[sec].montant>0} style="color:#009900"{/if}><a href="comptes.php?action=edit&id={$data[sec].id_transaction}">{$data[sec].libelle|truncate:50:" ..."}</a></td>
+							<!--<td align="left" nowrap="nowrap"{if $data[sec].montant>0} style="color:#009900"{/if}>{$data[sec].note|truncate:20:" ..."}</td>-->
+							<td align="right" nowrap="nowrap" style="color:#990000">{if $data[sec].montant<0}{$data[sec].montant|number_format:2:",":" "} &euro;{/if}</td>
+							<td align="right" nowrap="nowrap" style="color:#009900" title="Solde = {$data[sec].solde|number_format:2:",":" "} &euro;">{if $data[sec].montant>0}{$data[sec].montant|number_format:2:",":" "} &euro;{/if}</td>
+						  </tr>
+						{/section}
+                     </tbody>
+                  </table>
+               </div>
+               <!-- End .panel-body -->
+            </div>
+      </div>
+      </div>
+      </div>
+      </div>

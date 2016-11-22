@@ -1,0 +1,1 @@
+﻿<?php$config['db_name'] ="olganet1";$config['db_hostname'] ="localhost";$config['db_username'] ="olganet1";$config['db_password'] ="aok719kc";$config['version'] ="1.1 build 13-04-2011";$config['copyright'] ="Droits de reproduction et de diffusion réservés © 2012 OG";$config['application'] ="DEV - Dinero";$config['template'] ="base";$config['table_prefix'] ="dinero_";?>

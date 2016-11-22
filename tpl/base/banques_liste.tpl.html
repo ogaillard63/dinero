@@ -1,0 +1,22 @@
+<div class="titre_left">{$form.nom}</div>
+<div class="titre_right"><a href="params.php?action={$form.action}" title="{$form.title}">{$form.bouton}</a></div>
+<div id="tab">
+{if $data}
+	<table id="tablist">
+	 <tr>
+		<th>Etablissement</th>
+		<th>Logo</th>
+		<th>Couleur</th>
+		<th>Action</th>
+	 </tr>
+	{section name=sec loop=$data}
+	  <tr class="{cycle values="tr-light,tr-dark"}">
+		<td width="97%" align="left" nowrap><a href="params.php?action=edit_banque&id={$data[sec].id_banque}">{$data[sec].etablissement}</a></td>
+		<td width="1%" align="left" nowrap="nowrap"><a href="params.php?action=edit_banque&id={$data[sec].id_banque}"><img src="{$data[sec].logo}" width="100" /></a></td>
+		<td width="1%" align="left" nowrap="nowrap"><a href="params.php?action=edit_banque&id={$data[sec].id_banque}">{$data[sec].couleur}</a></td>
+		<td width="1%" align="center" nowrap="nowrap"><a href="params.php?action=edit_banque&id={$data[sec].id_banque}">X</a></td>
+	  </tr>
+	{/section}
+	</table>
+	{/if}
+</div>

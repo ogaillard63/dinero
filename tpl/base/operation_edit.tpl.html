@@ -1,0 +1,32 @@
+<div class="titre">{$form.nom}</div>
+<div id="tab">
+<form name="action_form" method="post" action="comptes.php">
+	<input name="id" type="hidden" value="{$data.id_transaction}" />
+	<input name="action" type="hidden" value="{$form.action}" />
+	<div id="form">
+		<div class="item">
+			<label>Date</label>
+			<input type="text" maxlength="16" name="date" size="16" value="{$data.date|date_format:"%d/%m/%Y"}" />
+		</div>
+		<div class="item">
+			<label>Libelle</label>
+			<input type="text" maxlength="128" name="libelle" size="96" value="{$data.libelle}" /></div>
+		<div class="item"><label>Commentaire</label> <input type="text"
+			maxlength="128" name="note" size="96" value="{$data.note}" /></div>
+		<div class="item"><label>Rubrique</label> <select id="select_rub" name="rub_id">
+			<option>Choisissez une rubrique</option>
+			{section name=sec loop=$rubriques}
+			<!--  <option disabled="false" value="1">DEBIT</option>-->
+			<option {if $rubriques[sec].sub_id eq 0}style="background-color: #CCC; font-weight: bold;" {/if}value="{$rubriques[sec].id_rub}"{if $data.rub_id eq $rubriques[sec].id_rub} selected{/if}>{$rubriques[sec].librub}</option>
+			{/section}
+		</select>
+		</div>
+		<div class="item"><label>Montant</label> <input type="text"
+			maxlength="16" name="montant" size="12" value="{$data.montant}" /></div>
+		<br />
+		<div align="right"><a
+			href="javascript:document.action_form.submit();" class="save_btn"></a>
+		&nbsp;<a href="javascript:history.go(-1);" class="cancel_btn"></a></div>
+	</div>
+</form>
+</div>

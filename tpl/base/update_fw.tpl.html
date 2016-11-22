@@ -1,0 +1,17 @@
+<div class="titre">{$form.nom}</div>
+<div id="tab">
+{if $data}<table id="tablist">
+	 <tr>
+		<th>Fichier</th>
+		<th>Chemin</th>
+		<th>Action</th>
+	 </tr>
+	{section name=sec loop=$data}
+	 <tr class="{cycle values="odd,even"}">
+		<td width="96%" nowrap="nowrap">{$data[sec].file}</td>
+		<td width="1%">{$data[sec].path}</td>
+                <td width="1%" align="center"><a href="update_fw.php?action=update_file&file_path={$data[sec].filepath}">MAJ</a></td>
+	  </tr>
+	{/section}
+</table>{else}<h3> > Tous les fichiers du framework sont à jour.</h3>{/if}
+</div>

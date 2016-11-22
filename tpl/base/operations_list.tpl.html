@@ -1,0 +1,103 @@
+{literal}<style>
+#import_btn {
+position:relative;
+ top:3px;
+ left:5px;
+}
+.tab_content {
+	display: none;
+}
+</style>{/literal}
+{literal}<script type="text/javascript" charset="utf-8">
+$(function() { 
+	$("ul.tabs li:first").addClass("active").show(); //Activate first tab
+	$(".tab_content:first").show(); //Show first tab content
+	
+	//On Click Event
+	$("ul.tabs li").click(function() {
+		$("ul.tabs li").removeClass("active"); //Remove any "active" class
+		$(this).addClass("active"); //Add "active" class to selected tab
+		$(".tab_content").hide(); //Hide all tab content
+		var activeTab = $(this).find("a").attr("href"); //Find the rel attribute value to identify the active tab + content
+		$(activeTab).fadeIn(); //Fade in the active content
+		return false;
+	});
+
+	$('#import').keyup(function(){
+ 		var txt = jQuery.trim($(this).val());
+ 		//console.log($(this).val());
+ 		//$(this).val(txt.replace(/(\)/g, " "));
+ 		//$(this).val(txt.replace(/(CARTE\s)/g, "CB "));
+ 		$(this).val(txt.replace(/(\s\n)|(##)|(\t)/g, "#"));
+ 		//$(this).val(txt.replace(/##/, "#"));
+ 		//alert(this.value);
+ 		});
+$('#import_btn').toggle(
+	    function() {
+	    	$('#import_form').slideDown('slow', function() {
+	    	    // Animation complete.
+	    	  });
+	    },
+	    function() {
+	    	$('#import_form').slideUp('fast', function() {
+	    	    // Animation complete.
+	    	  });
+	    }
+	);
+});
+</script>{/literal}
+<div class="titre_left">{$infos.banque} - {$infos.intitule}</div>
+<div class="titre_right">{$infos.courant|number_format:2:",":" "} &euro;</div>
+<img src="img/import_btn.png" title="Importer des opérations" id="import_btn">
+<div id="tab" class="container">
+<div id="import_form" style="display:none; margin-bottom:5px;">
+	<fieldset><legend>Ajouter des opérations</legend>
+		<form name="action_form" method="post" action="comptes.php">
+		<input name="action" type="hidden" value="insert" />
+		<input name="compte_id" type="hidden" value="{$compte_id}" />
+		<div id="form">
+			<div class="item">
+			 <textarea name="data" cols="100" rows="8" id="import" style="width:99%"></textarea>
+			</div>
+			<div align="right">
+			<a href="javascript:document.action_form.submit();" class="save_btn"></a>
+			</div>
+		</div>
+		</form>
+	</fieldset>
+	</div>
+	<ul class="tabs">
+        {section name=i loop=$annees step=-1}
+        <li><a href="#tab{$annees[i].an}">{$annees[i].an}</a></li>
+        {/section}
+    </ul>
+	<div class="tab_container">
+        {section name=i loop=$annees step=-1}
+       <div id="tab{$annees[i].an}" class="tab_content">
+           <table id="tablist">
+	 <tr>
+		<th>&nbsp;</th>
+		<th>Date</th>
+		<th>Rubrique</th>
+		<th>Libelle</th>
+		{if $is_ipad ne 1}<th>Commentaire</th>{/if}
+		<th>Débit</th>
+		<th>Crédit</th>
+	 </tr>
+	{section name=sec loop=$data step=-1}
+	  {if $data[sec].date|date_format:"%Y" eq $annees[i].an}<tr class="{cycle values="odd,even"}"{if $data[sec].import eq '1'} style="background-color:#cfffc0;"{/if}>
+		<td width="1%" align="center"><a href="comptes.php?action=pointage&etat={$data[sec].pointage}&id={$data[sec].id_transaction}" title="Pointage de la transaction"><img src="tpl/base/css/img/stat{$data[sec].pointage}.jpg"></a></td>
+		<td width="1%" align="left" nowrap="nowrap"><a href="comptes.php?action=edit&id={$data[sec].id_transaction}" title="{$data[sec].libelle}">{$data[sec].date|date_format:"%d/%m/%Y"}</a></td>
+		<td width="1%" align="left" nowrap="nowrap"{if $data[sec].montant>0} style="color:#009900"{/if}>{$data[sec].librub}</td>
+		<td width="1%" align="left" nowrap="nowrap"{if $data[sec].montant>0} style="color:#009900"{/if}><a href="comptes.php?action=edit&id={$data[sec].id_transaction}" title="Solde = {$data[sec].solde|number_format:2:",":" "} &euro;">{$data[sec].libelle|truncate:50:" ..."}</a></td>
+		{if $is_ipad ne 1}<td width="95%" align="left" nowrap="nowrap"{if $data[sec].montant>0} style="color:#009900"{/if}>{$data[sec].note|truncate:50:" ..."}</td>{/if}
+		<td width="1%" align="right" nowrap="nowrap" style="color:#990000">{if $data[sec].montant<0}{$data[sec].montant|number_format:2:",":" "} &euro;{/if}</td>
+		<td width="1%" align="right" nowrap="nowrap" style="color:#009900">{if $data[sec].montant>0}{$data[sec].montant|number_format:2:",":" "} &euro;{/if}</td>
+	  </tr>{/if}
+	{/section}
+	</table>
+       </div>
+       {/section}
+   </div>
+</div>
+
