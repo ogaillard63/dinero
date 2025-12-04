@@ -1,0 +1,398 @@
+{% extends "layout.twig" %}
+
+{% block title %}Import de transactions{% endblock %}
+
+{% block content %}
+    <h2 class="text-3xl font-light mb-8 text-gray-800">Import de transactions</h2>
+
+    <!-- Step 1: Paste data -->
+    <div id="step1" class="bg-white border border-gray-200 shadow-sm p-8 mb-8">
+        <h3 class="text-xl font-medium text-gray-900 mb-4">Étape 1 : Collez vos données</h3>
+        <p class="text-gray-600 mb-6">Copiez-collez vos transactions depuis un fichier CSV, Excel, ou directement depuis votre banque en ligne.</p>
+        
+        <div class="mb-6">
+            <label class="block text-gray-700 text-sm font-bold mb-2 uppercase" for="account_select">
+                Compte de destination
+            </label>
+            <select 
+                id="account_select" 
+                class="shadow-none appearance-none border border-gray-300 w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:border-gray-500"
+                required
+            >
+                <option value="">Sélectionner un compte</option>
+                {% for account in accounts %}
+                <option value="{{ account.id }}">{{ account.bank_name }} - {{ account.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-6">
+            <label class="block text-gray-700 text-sm font-bold mb-2 uppercase" for="raw_data">
+                Données brutes
+            </label>
+            <textarea 
+                id="raw_data" 
+                class="shadow-none appearance-none border border-gray-300 w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:border-gray-500 font-mono text-sm" 
+                rows="15"
+                placeholder="Collez vos données ici...&#10;&#10;Exemples acceptés:&#10;- CSV (séparateur: virgule, point-virgule, tabulation)&#10;- Copier-coller depuis Excel&#10;- Copier-coller depuis votre banque en ligne"
+            ></textarea>
+        </div>
+
+        <button 
+            onclick="parseData()" 
+            class="bg-black hover:bg-gray-800 text-white font-bold py-3 px-8 uppercase tracking-wider transition-colors"
+        >
+            Analyser les données
+        </button>
+    </div>
+
+    <!-- Step 2: Preview and mapping -->
+    <div id="step2" class="bg-white border border-gray-200 shadow-sm p-8 mb-8 hidden">
+        <h3 class="text-xl font-medium text-gray-900 mb-4">Étape 2 : Vérification et mapping des colonnes</h3>
+        <p class="text-gray-600 mb-6">Vérifiez que les colonnes sont correctement identifiées. Vous pouvez ajuster le mapping si nécessaire.</p>
+        
+        <div class="mb-6 p-4 bg-gray-50 border border-gray-200">
+            <label class="flex items-center cursor-pointer">
+                <input type="checkbox" id="skip_duplicates" checked class="mr-3 h-4 w-4 border-gray-300">
+                <div>
+                    <span class="text-sm font-bold text-gray-700">Ignorer les doublons</span>
+                    <p class="text-xs text-gray-500 mt-1">Les transactions avec la même date et le même montant seront ignorées. Décochez pour importer tous les enregistrements, y compris les doublons.</p>
+                </div>
+            </label>
+        </div>
+        
+        <div class="mb-6 grid grid-cols-3 gap-4">
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2 uppercase">Colonne Date</label>
+                <select id="mapping_date" class="shadow-none appearance-none border border-gray-300 w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:border-gray-500">
+                </select>
+            </div>
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2 uppercase">Colonne Description</label>
+                <select id="mapping_description" class="shadow-none appearance-none border border-gray-300 w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:border-gray-500">
+                </select>
+            </div>
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2 uppercase">Colonne Montant</label>
+                <select id="mapping_amount" class="shadow-none appearance-none border border-gray-300 w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:border-gray-500">
+                </select>
+            </div>
+        </div>
+
+        <div class="mb-6">
+            <div class="flex justify-between items-center mb-2">
+                <h4 class="text-sm font-bold text-gray-700 uppercase">Aperçu des transactions</h4>
+                <span id="preview_count" class="text-sm text-gray-500"></span>
+            </div>
+            <div class="border border-gray-200 overflow-auto" style="max-height: 500px;">
+                <table class="w-full text-left border-collapse">
+                    <thead class="sticky top-0 bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 border-b-2 border-gray-200 text-xs font-medium text-gray-500 uppercase">#</th>
+                            <th class="px-4 py-3 border-b-2 border-gray-200 text-xs font-medium text-gray-500 uppercase">Date brute</th>
+                            <th class="px-4 py-3 border-b-2 border-gray-200 text-xs font-medium text-gray-500 uppercase">Date convertie</th>
+                            <th class="px-4 py-3 border-b-2 border-gray-200 text-xs font-medium text-gray-500 uppercase">Description</th>
+                            <th class="px-4 py-3 border-b-2 border-gray-200 text-xs font-medium text-gray-500 uppercase text-right">Montant brut</th>
+                            <th class="px-4 py-3 border-b-2 border-gray-200 text-xs font-medium text-gray-500 uppercase text-right">Montant converti</th>
+                            <th class="px-4 py-3 border-b-2 border-gray-200 text-xs font-medium text-gray-500 uppercase text-center">Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody id="preview_table">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="flex space-x-4">
+            <button 
+                onclick="backToStep1()" 
+                class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-8 uppercase tracking-wider transition-colors"
+            >
+                Retour
+            </button>
+            <button 
+                onclick="importTransactions()" 
+                class="bg-black hover:bg-gray-800 text-white font-bold py-3 px-8 uppercase tracking-wider transition-colors"
+            >
+                Importer <span id="import_count"></span> transactions
+            </button>
+        </div>
+    </div>
+
+    <!-- Step 3: Result -->
+    <div id="step3" class="bg-white border border-gray-200 shadow-sm p-8 hidden">
+        <h3 class="text-xl font-medium text-gray-900 mb-4">Résultat de l'import</h3>
+        <div id="import_result"></div>
+        <button 
+            onclick="resetImport()" 
+            class="mt-6 bg-black hover:bg-gray-800 text-white font-bold py-3 px-8 uppercase tracking-wider transition-colors"
+        >
+            Nouvel import
+        </button>
+    </div>
+
+    <script>
+        let parsedData = null;
+
+        function parseData() {
+            const rawData = document.getElementById('raw_data').value;
+            const accountId = document.getElementById('account_select').value;
+
+            if (!accountId) {
+                alert('Veuillez sélectionner un compte');
+                return;
+            }
+
+            if (!rawData.trim()) {
+                alert('Veuillez coller des données');
+                return;
+            }
+
+            fetch('/admin/import/parse', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'raw_data=' + encodeURIComponent(rawData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+
+                parsedData = data;
+                showStep2(data);
+            })
+            .catch(error => {
+                alert('Erreur lors de l\'analyse des données');
+                console.error(error);
+            });
+        }
+
+        function showStep2(data) {
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.remove('hidden');
+
+            // Populate column selectors
+            const headers = data.hasHeader ? data.headers : data.rows[0].map((_, i) => `Colonne ${i + 1}`);
+            
+            ['date', 'description', 'amount'].forEach(field => {
+                const select = document.getElementById('mapping_' + field);
+                select.innerHTML = '<option value="">-- Ignorer --</option>';
+                
+                headers.forEach((header, index) => {
+                    const option = document.createElement('option');
+                    option.value = index;
+                    option.textContent = header;
+                    if (data.suggestedMapping[field] === index) {
+                        option.selected = true;
+                    }
+                    select.appendChild(option);
+                });
+            });
+
+            // Show preview
+            updatePreview();
+        }
+
+        function updatePreview() {
+            const dateCol = document.getElementById('mapping_date').value;
+            const descCol = document.getElementById('mapping_description').value;
+            const amountCol = document.getElementById('mapping_amount').value;
+
+            const tbody = document.getElementById('preview_table');
+            tbody.innerHTML = '';
+
+            let validCount = 0;
+            let errorCount = 0;
+            
+            parsedData.rows.forEach((row, index) => {
+                const rawDate = dateCol !== '' ? row[dateCol] : '';
+                const rawDesc = descCol !== '' ? row[descCol] : '';
+                const rawAmount = amountCol !== '' ? row[amountCol] : '';
+                
+                // Convert date
+                const convertedDate = parseDate(rawDate);
+                const dateValid = convertedDate !== null;
+                
+                // Convert amount
+                const convertedAmount = parseAmount(rawAmount);
+                const amountValid = convertedAmount !== null && !isNaN(convertedAmount);
+                
+                // Check if row is valid
+                const isValid = dateValid && rawDesc && amountValid;
+                if (isValid) validCount++;
+                else errorCount++;
+                
+                const tr = document.createElement('tr');
+                tr.className = isValid ? 'hover:bg-gray-50' : 'bg-red-50 hover:bg-red-100';
+                
+                tr.innerHTML = `
+                    <td class="px-4 py-2 border-b border-gray-100 text-xs text-gray-500">${index + 1}</td>
+                    <td class="px-4 py-2 border-b border-gray-100 text-sm font-mono">${rawDate || '-'}</td>
+                    <td class="px-4 py-2 border-b border-gray-100 text-sm ${dateValid ? 'text-green-600 font-medium' : 'text-red-600'}">${convertedDate || '❌ Invalide'}</td>
+                    <td class="px-4 py-2 border-b border-gray-100 text-sm">${rawDesc || '-'}</td>
+                    <td class="px-4 py-2 border-b border-gray-100 text-sm font-mono text-right">${rawAmount || '-'}</td>
+                    <td class="px-4 py-2 border-b border-gray-100 text-sm text-right font-medium ${amountValid ? (convertedAmount < 0 ? 'text-red-600' : 'text-green-600') : 'text-red-600'}">${amountValid ? convertedAmount.toFixed(2) + ' €' : '❌ Invalide'}</td>
+                    <td class="px-4 py-2 border-b border-gray-100 text-center">
+                        ${isValid ? '<span class="text-green-600">✓</span>' : '<span class="text-red-600">✗</span>'}
+                    </td>
+                `;
+                
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('preview_count').textContent = `${validCount} valides, ${errorCount} erreurs sur ${parsedData.rows.length} lignes`;
+            document.getElementById('import_count').textContent = validCount;
+        }
+
+        // Date parsing function (client-side)
+        function parseDate(dateStr) {
+            if (!dateStr) return null;
+            
+            // Try various formats
+            const formats = [
+                /^(\d{4})-(\d{2})-(\d{2})$/,  // YYYY-MM-DD
+                /^(\d{2})\/(\d{2})\/(\d{4})$/, // DD/MM/YYYY
+                /^(\d{2})-(\d{2})-(\d{4})$/,  // DD-MM-YYYY
+                /^(\d{2})\/(\d{2})\/(\d{2})$/, // DD/MM/YY
+                /^(\d{2})-(\d{2})-(\d{2})$/   // DD-MM-YY
+            ];
+            
+            for (let i = 0; i < formats.length; i++) {
+                const match = dateStr.match(formats[i]);
+                if (match) {
+                    let year, month, day;
+                    
+                    if (i === 0) { // YYYY-MM-DD
+                        year = match[1];
+                        month = match[2];
+                        day = match[3];
+                    } else if (i === 3 || i === 4) { // DD/MM/YY or DD-MM-YY
+                        day = match[1];
+                        month = match[2];
+                        year = '20' + match[3];
+                    } else { // DD/MM/YYYY or DD-MM-YYYY
+                        day = match[1];
+                        month = match[2];
+                        year = match[3];
+                    }
+                    
+                    const date = new Date(year, month - 1, day);
+                    if (date && !isNaN(date.getTime())) {
+                        return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+                    }
+                }
+            }
+            
+            return null;
+        }
+
+        // Amount parsing function (client-side)
+        function parseAmount(amountStr) {
+            if (!amountStr) return null;
+            
+            // Remove currency symbols and spaces
+            let cleaned = amountStr.replace(/[^\d,.-]/g, '');
+            
+            // Replace comma with dot
+            cleaned = cleaned.replace(',', '.');
+            
+            // Check for negative
+            const isNegative = amountStr.includes('-') || amountStr.includes('(');
+            
+            const amount = parseFloat(cleaned);
+            
+            if (isNaN(amount)) return null;
+            
+            return isNegative ? -Math.abs(amount) : amount;
+        }
+
+        // Update preview when mapping changes
+        ['date', 'description', 'amount'].forEach(field => {
+            document.getElementById('mapping_' + field).addEventListener('change', updatePreview);
+        });
+
+        function importTransactions() {
+            const accountId = document.getElementById('account_select').value;
+            const dateCol = document.getElementById('mapping_date').value;
+            const descCol = document.getElementById('mapping_description').value;
+            const amountCol = document.getElementById('mapping_amount').value;
+            const skipDuplicates = document.getElementById('skip_duplicates').checked;
+
+            if (dateCol === '' || descCol === '' || amountCol === '') {
+                alert('Veuillez mapper toutes les colonnes requises');
+                return;
+            }
+
+            const transactions = parsedData.rows.map(row => ({
+                date: row[dateCol],
+                description: row[descCol],
+                amount: row[amountCol]
+            }));
+
+            fetch('/admin/import/import', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'account_id=' + accountId + '&skip_duplicates=' + (skipDuplicates ? '1' : '0') + '&transactions=' + encodeURIComponent(JSON.stringify(transactions))
+            })
+            .then(response => response.json())
+            .then(data => {
+                showStep3(data);
+            })
+            .catch(error => {
+                alert('Erreur lors de l\'import');
+                console.error(error);
+            });
+        }
+
+        function showStep3(data) {
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step3').classList.remove('hidden');
+
+            let html = `
+                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4">
+                    <p class="font-bold">${data.imported} transaction(s) importée(s) avec succès</p>
+                </div>
+            `;
+
+            if (data.skipped > 0) {
+                html += `
+                    <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4">
+                        <p class="font-bold">${data.skipped} doublon(s) ignoré(s)</p>
+                        <p class="text-sm mt-1">Les transactions avec la même date et le même montant ont été ignorées pour éviter les doublons.</p>
+                    </div>
+                `;
+            }
+
+            if (data.errors && data.errors.length > 0) {
+                html += `
+                    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
+                        <p class="font-bold mb-2">Erreurs rencontrées :</p>
+                        <ul class="list-disc list-inside text-sm">
+                            ${data.errors.map(err => `<li>${err}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            document.getElementById('import_result').innerHTML = html;
+        }
+
+        function backToStep1() {
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step1').classList.remove('hidden');
+        }
+
+        function resetImport() {
+            document.getElementById('step3').classList.add('hidden');
+            document.getElementById('step1').classList.remove('hidden');
+            document.getElementById('raw_data').value = '';
+            parsedData = null;
+        }
+    </script>
+{% endblock %}

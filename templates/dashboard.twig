@@ -1,0 +1,260 @@
+{% extends "layout.twig" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+    <h2 class="text-3xl font-light mb-8 text-gray-800">Vue d'ensemble</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <!-- Total Balance Card -->
+        <div class="bg-white p-6 border border-gray-200 shadow-sm">
+            <div class="text-sm text-gray-500 uppercase tracking-wider mb-2">Solde Total</div>
+            <div class="text-3xl font-bold text-gray-900">{{ totalBalance|number_format(2, ',', ' ') }} €</div>
+        </div>
+        
+        <!-- Quick Stats or other info -->
+        <div class="bg-white p-6 border border-gray-200 shadow-sm">
+            <div class="text-sm text-gray-500 uppercase tracking-wider mb-2">Comptes Actifs</div>
+            {% set activeCount = 0 %}
+            {% for account in accounts %}
+                {% if account.is_active == 1 %}
+                    {% set activeCount = activeCount + 1 %}
+                {% endif %}
+            {% endfor %}
+            <div class="text-3xl font-bold text-gray-900">{{ activeCount }}/{{ accounts|length }}</div>
+        </div>
+
+        <div class="bg-white p-6 border border-gray-200 shadow-sm">
+            <div class="text-sm text-gray-500 uppercase tracking-wider mb-2">Dernière opération</div>
+            <div class="text-3xl font-bold text-gray-900">
+                {% if lastTransactionDate %}
+                    {{ lastTransactionDate|date("d/m/Y") }}
+                {% else %}
+                    --
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Balance Evolution Chart -->
+    <div class="bg-white border border-gray-200 shadow-sm p-6 mb-8">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-lg font-medium text-gray-900">Évolution du solde</h3>
+            <div class="flex items-center space-x-3">
+                <label class="text-sm text-gray-600">Afficher :</label>
+                <select 
+                    id="accountSelector" 
+                    class="shadow-none appearance-none border border-gray-300 py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:border-gray-500"
+                    onchange="toggleAccountOverlay(this.value)"
+                >
+                    <option value="">Solde global</option>
+                    {% for account in accounts %}
+                    <option value="{{ account.id }}">{{ account.bank_name }} - {{ account.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <canvas id="balanceChart" height="80"></canvas>
+    </div>
+
+    <!-- Accounts List -->
+    <div class="bg-white border border-gray-200 shadow-sm mb-8">
+        <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
+            <h3 class="text-lg font-medium text-gray-900">Comptes actifs</h3>
+        </div>
+        <div class="divide-y divide-gray-100">
+            {% set hasActiveAccounts = false %}
+            {% for account in accounts %}
+                {% if account.is_active == 1 %}
+                    {% set hasActiveAccounts = true %}
+                    <a href="/admin/accounts/{{ account.id }}" class="flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition-colors block">
+                        <div>
+                            <div class="font-medium text-gray-900">{{ account.bank_name }} - {{ account.name }}</div>
+                            {% if account.number %}
+                            <div class="text-sm text-gray-500">{{ account.number }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="text-right">
+                            <div class="text-xl font-bold text-gray-900">{{ account.current_balance|number_format(2, ',', ' ') }} €</div>
+                        </div>
+                    </a>
+                {% endif %}
+            {% endfor %}
+            {% if not hasActiveAccounts %}
+            <div class="px-6 py-8 text-center text-sm text-gray-500">Aucun compte actif</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Inactive Accounts List -->
+    {% set hasInactiveAccounts = false %}
+    {% for account in accounts %}
+        {% if account.is_active == 0 %}
+            {% set hasInactiveAccounts = true %}
+        {% endif %}
+    {% endfor %}
+    
+    {% if hasInactiveAccounts %}
+    <div class="bg-white border border-gray-200 shadow-sm mb-8 opacity-60">
+        <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
+            <h3 class="text-lg font-medium text-gray-900">Comptes inactifs</h3>
+        </div>
+        <div class="divide-y divide-gray-100">
+            {% for account in accounts %}
+                {% if account.is_active == 0 %}
+                    <a href="/admin/accounts/{{ account.id }}" class="flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition-colors block">
+                        <div>
+                            <div class="font-medium text-gray-900">{{ account.bank_name }} - {{ account.name }} <span class="text-xs text-gray-400">(Inactif)</span></div>
+                            {% if account.number %}
+                            <div class="text-sm text-gray-500">{{ account.number }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="text-right">
+                            <div class="text-xl font-bold text-gray-900">{{ account.current_balance|number_format(2, ',', ' ') }} €</div>
+                        </div>
+                    </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Chart.js with Zoom Plugin -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+    <script>
+        const ctx = document.getElementById('balanceChart').getContext('2d');
+        const balanceChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: {{ monthlyData.labels|json_encode|raw }},
+                datasets: [{
+                    label: 'Solde global (€)',
+                    data: {{ monthlyData.balances|json_encode|raw }},
+                    borderColor: '#000000',
+                    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    pointBackgroundColor: '#000000',
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: '#000000',
+                        titleColor: '#ffffff',
+                        bodyColor: '#ffffff',
+                        borderColor: '#000000',
+                        borderWidth: 1,
+                        padding: 12,
+                        displayColors: false,
+                        callbacks: {
+                            label: function(context) {
+                                return context.parsed.y.toFixed(2).replace('.', ',') + ' €';
+                            }
+                        }
+                    },
+                    zoom: {
+                        zoom: {
+                            wheel: {
+                                enabled: true,
+                                speed: 0.1
+                            },
+                            pinch: {
+                                enabled: true
+                            },
+                            mode: 'x'
+                        },
+                        pan: {
+                            enabled: true,
+                            mode: 'x'
+                        },
+                        limits: {
+                            x: {min: 'original', max: 'original'}
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        ticks: {
+                            callback: function(value) {
+                                return value.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' €';
+                            }
+                        },
+                        grid: {
+                            color: '#e5e7eb'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Function to toggle account overlay
+        function toggleAccountOverlay(accountId) {
+            if (!accountId) {
+                // Show global balance (default)
+                balanceChart.data.datasets[0].label = 'Solde global (€)';
+                balanceChart.data.datasets[0].data = {{ monthlyData.balances|json_encode|raw }};
+                balanceChart.data.datasets[0].borderColor = '#000000';
+                balanceChart.data.datasets[0].backgroundColor = 'rgba(0, 0, 0, 0.1)';
+                balanceChart.data.datasets[0].pointBackgroundColor = '#000000';
+                
+                // Remove second dataset if exists
+                if (balanceChart.data.datasets.length > 1) {
+                    balanceChart.data.datasets.pop();
+                }
+                
+                balanceChart.options.plugins.legend.display = false;
+                balanceChart.update();
+                return;
+            }
+            
+            // Fetch account balance data
+            fetch(`/admin/api/account-balance?account_id=${accountId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        console.error(data.error);
+                        return;
+                    }
+                    
+                    // Replace the main dataset with account data
+                    balanceChart.data.datasets[0].label = data.accountName;
+                    balanceChart.data.datasets[0].data = data.balances;
+                    balanceChart.data.datasets[0].borderColor = '#3b82f6';
+                    balanceChart.data.datasets[0].backgroundColor = 'rgba(59, 130, 246, 0.1)';
+                    balanceChart.data.datasets[0].pointBackgroundColor = '#3b82f6';
+                    
+                    // Remove second dataset if exists
+                    if (balanceChart.data.datasets.length > 1) {
+                        balanceChart.data.datasets.pop();
+                    }
+                    
+                    // Show legend with account name
+                    balanceChart.options.plugins.legend.display = true;
+                    
+                    balanceChart.update();
+                })
+                .catch(error => {
+                    console.error('Error fetching account data:', error);
+                });
+        }
+    </script>
+{% endblock %}

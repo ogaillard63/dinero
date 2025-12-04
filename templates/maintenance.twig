@@ -1,0 +1,240 @@
+{% extends "layout.twig" %}
+
+{% block title %}Maintenance{% endblock %}
+
+{% block content %}
+    <h2 class="text-3xl font-light mb-8 text-gray-800">Maintenance</h2>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Backup section -->
+        <div class="bg-white border border-gray-200 shadow-sm p-6">
+            <h3 class="text-xl font-medium text-gray-900 mb-4">Sauvegarde de la base de données</h3>
+            <p class="text-gray-600 mb-6">Créez une sauvegarde complète de votre base de données. Les 5 sauvegardes les plus récentes sont conservées automatiquement.</p>
+            
+            <button 
+                onclick="createBackup()" 
+                class="w-full bg-black hover:bg-gray-800 text-white font-bold py-3 px-6 uppercase tracking-wider transition-colors mb-4"
+            >
+                Créer une sauvegarde
+            </button>
+            
+            <div id="backup_message" class="hidden mb-4"></div>
+        </div>
+
+        <!-- Info section -->
+        <div class="bg-gray-50 border border-gray-200 p-6">
+            <h3 class="text-xl font-medium text-gray-900 mb-4">Informations</h3>
+            <ul class="space-y-2 text-sm text-gray-700">
+                <li class="flex items-start">
+                    <svg class="h-5 w-5 text-gray-400 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="square" stroke-linejoin="miter" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>Les sauvegardes incluent toutes les tables : utilisateurs, banques, comptes et transactions</span>
+                </li>
+                <li class="flex items-start">
+                    <svg class="h-5 w-5 text-gray-400 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="square" stroke-linejoin="miter" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>Seules les 5 sauvegardes les plus récentes sont conservées</span>
+                </li>
+                <li class="flex items-start">
+                    <svg class="h-5 w-5 text-gray-400 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="square" stroke-linejoin="miter" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>La restauration remplace toutes les données actuelles</span>
+                </li>
+                <li class="flex items-start">
+                    <svg class="h-5 w-5 text-red-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="square" stroke-linejoin="miter" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <span class="font-bold text-red-600">Créez toujours une sauvegarde avant de restaurer !</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+        <!-- Balance Snapshots section -->
+        <div class="bg-white border border-gray-200 shadow-sm p-6">
+            <h3 class="text-xl font-medium text-gray-900 mb-4">Snapshots de solde</h3>
+            <p class="text-gray-600 mb-6">Recalculez les snapshots quotidiens du solde global pour mettre à jour le graphique du dashboard.</p>
+            
+            {% if snapshotInfo.count > 0 %}
+            <div class="mb-4 p-3 bg-gray-50 border border-gray-200 text-sm">
+                <p><strong>Snapshots existants :</strong> {{ snapshotInfo.count }}</p>
+                <p><strong>Du :</strong> {{ snapshotInfo.first_date|date("d/m/Y") }} <strong>au :</strong> {{ snapshotInfo.last_date|date("d/m/Y") }}</p>
+            </div>
+            {% endif %}
+            
+            <button 
+                onclick="rebuildSnapshots()" 
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 uppercase tracking-wider transition-colors mb-4"
+            >
+                Recalculer tous les snapshots
+            </button>
+            
+            <div id="snapshot_message" class="hidden"></div>
+        </div>
+    </div>
+
+    <!-- Backups list -->
+    <div class="mt-8 bg-white border border-gray-200 shadow-sm">
+        <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
+            <h3 class="text-lg font-medium text-gray-900">Sauvegardes disponibles</h3>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-gray-50">
+                        <th class="px-6 py-3 border-b border-gray-200 text-xs font-medium text-gray-500 uppercase tracking-wider">Fichier</th>
+                        <th class="px-6 py-3 border-b border-gray-200 text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                        <th class="px-6 py-3 border-b border-gray-200 text-xs font-medium text-gray-500 uppercase tracking-wider">Taille</th>
+                        <th class="px-6 py-3 border-b border-gray-200 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="backups_table" class="divide-y divide-gray-100">
+                    {% for backup in backups %}
+                    <tr class="hover:bg-gray-50 transition-colors" data-filename="{{ backup.filename }}">
+                        <td class="px-6 py-4 text-sm font-mono text-gray-900">{{ backup.filename }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">{{ backup.date }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">{{ backup.size }}</td>
+                        <td class="px-6 py-4 text-right">
+                            <div class="flex justify-end space-x-2">
+                                <button onclick="restoreBackup('{{ backup.filename }}')" class="text-xs uppercase font-bold text-blue-600 hover:text-blue-800 px-2 py-1 border border-blue-300 hover:border-blue-800 transition-colors">
+                                    Restaurer
+                                </button>
+                                <a href="/admin/maintenance/backup/download/{{ backup.filename }}" class="text-xs uppercase font-bold text-gray-500 hover:text-black px-2 py-1 border border-gray-300 hover:border-black transition-colors">
+                                    Télécharger
+                                </a>
+                                <button onclick="deleteBackup('{{ backup.filename }}')" class="text-xs uppercase font-bold text-red-500 hover:text-red-700 px-2 py-1 border border-red-300 hover:border-red-700 transition-colors">
+                                    Supprimer
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="px-6 py-8 text-center text-sm text-gray-500">Aucune sauvegarde disponible</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function createBackup() {
+            const messageDiv = document.getElementById('backup_message');
+            messageDiv.className = 'hidden';
+            
+            fetch('/admin/maintenance/backup/create', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    messageDiv.className = 'bg-green-100 border-l-4 border-green-500 text-green-700 p-4';
+                    messageDiv.textContent = `Sauvegarde créée avec succès: ${data.filename} (${data.size})`;
+                    
+                    // Reload page to show new backup
+                    setTimeout(() => window.location.reload(), 1500);
+                } else {
+                    messageDiv.className = 'bg-red-100 border-l-4 border-red-500 text-red-700 p-4';
+                    messageDiv.textContent = 'Erreur: ' + data.error;
+                }
+            })
+            .catch(error => {
+                messageDiv.className = 'bg-red-100 border-l-4 border-red-500 text-red-700 p-4';
+                messageDiv.textContent = 'Erreur lors de la création de la sauvegarde';
+            });
+        }
+
+        function restoreBackup(filename) {
+            if (!confirm(`⚠️ ATTENTION ⚠️\n\nVous êtes sur le point de restaurer la base de données.\nToutes les données actuelles seront remplacées par celles de la sauvegarde:\n\n${filename}\n\nCette action est IRRÉVERSIBLE.\n\nVoulez-vous continuer ?`)) {
+                return;
+            }
+
+            if (!confirm('Dernière confirmation : Êtes-vous ABSOLUMENT SÛR de vouloir restaurer cette sauvegarde ?')) {
+                return;
+            }
+
+            fetch('/admin/maintenance/backup/restore', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'filename=' + encodeURIComponent(filename)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('✓ Base de données restaurée avec succès !\n\nLa page va se recharger.');
+                    window.location.reload();
+                } else {
+                    alert('❌ Erreur: ' + data.error);
+                }
+            })
+            .catch(error => {
+                alert('❌ Erreur lors de la restauration');
+            });
+        }
+
+        function deleteBackup(filename) {
+            if (!confirm(`Voulez-vous vraiment supprimer la sauvegarde:\n\n${filename}\n\nCette action est irréversible.`)) {
+                return;
+            }
+
+            fetch('/admin/maintenance/backup/delete', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'filename=' + encodeURIComponent(filename)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Remove row from table
+                    const row = document.querySelector(`tr[data-filename="${filename}"]`);
+                    if (row) {
+                        row.remove();
+                    }
+                } else {
+                    alert('Erreur: ' + data.error);
+                }
+            })
+            .catch(error => {
+                alert('Erreur lors de la suppression');
+            });
+        }
+
+        function rebuildSnapshots() {
+            const messageDiv = document.getElementById('snapshot_message');
+            messageDiv.className = 'bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4';
+            messageDiv.textContent = 'Recalcul en cours...';
+            messageDiv.classList.remove('hidden');
+            
+            fetch('/admin/maintenance/snapshots/rebuild', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    messageDiv.className = 'bg-green-100 border-l-4 border-green-500 text-green-700 p-4';
+                    messageDiv.textContent = data.message;
+                    
+                    // Reload page after 2 seconds
+                    setTimeout(() => window.location.reload(), 2000);
+                } else {
+                    messageDiv.className = 'bg-red-100 border-l-4 border-red-500 text-red-700 p-4';
+                    messageDiv.textContent = 'Erreur: ' + data.error;
+                }
+            })
+            .catch(error => {
+                messageDiv.className = 'bg-red-100 border-l-4 border-red-500 text-red-700 p-4';
+                messageDiv.textContent = 'Erreur lors du recalcul des snapshots';
+            });
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dinero - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * { border-radius: 0 !important; }
+    </style>
+</head>
+<body class="bg-gray-100 h-screen flex items-center justify-center">
+
+    <div class="bg-white p-8 shadow-lg w-full max-w-md border border-gray-200">
+        <h1 class="text-3xl font-bold text-center mb-8 uppercase tracking-widest">Dinero</h1>
+        
+        {% if error %}
+            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6" role="alert">
+                <p>{{ error }}</p>
+            </div>
+        {% endif %}
+
+        <form action="/login" method="POST">
+            <div class="mb-6">
+                <label class="block text-gray-700 text-sm font-bold mb-2 uppercase" for="username">
+                    Utilisateur
+                </label>
+                <input class="shadow-none appearance-none border border-gray-300 w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:border-gray-500" id="username" name="username" type="text" placeholder="Votre identifiant">
+            </div>
+            <div class="mb-8">
+                <label class="block text-gray-700 text-sm font-bold mb-2 uppercase" for="password">
+                    Mot de passe
+                </label>
+                <input class="shadow-none appearance-none border border-gray-300 w-full py-3 px-4 text-gray-700 mb-3 leading-tight focus:outline-none focus:border-gray-500" id="password" name="password" type="password" placeholder="******************">
+            </div>
+            <div class="flex items-center justify-between">
+                <button class="bg-black hover:bg-gray-800 text-white font-bold py-3 px-6 w-full focus:outline-none focus:shadow-outline uppercase tracking-wider transition-colors duration-200" type="submit">
+                    Se connecter
+                </button>
+            </div>
+        </form>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,75 @@
+{% extends "layout.twig" %}
+
+{% block title %}Compte {{ account.name }}{% endblock %}
+
+{% block content %}
+    <div class="mb-8">
+        <a href="/admin/banks" class="text-sm text-gray-500 hover:text-black mb-4 inline-block">&larr; Retour aux banques</a>
+        <div class="flex justify-between items-end">
+            <div>
+                <h2 class="text-3xl font-light text-gray-800">{{ account.name }}</h2>
+                <p class="text-gray-500">{{ account.bank_name }} - {{ account.number }}</p>
+            </div>
+            <div class="flex items-end space-x-4">
+                <div class="text-right">
+                    <div class="text-4xl font-bold text-gray-900">{{ account.current_balance|number_format(2, ',', ' ') }} €</div>
+                    <div class="text-sm text-gray-400 uppercase">Solde actuel</div>
+                </div>
+                <div class="flex space-x-2">
+                    <a href="/admin/accounts/{{ account.id }}/edit" class="text-xs uppercase font-bold text-gray-500 hover:text-black px-3 py-1 border border-gray-300 hover:border-black transition-colors">Modifier</a>
+                    <form action="/admin/accounts/{{ account.id }}/delete" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce compte ?');" class="inline">
+                        <button type="submit" class="text-xs uppercase font-bold text-red-500 hover:text-red-700 px-3 py-1 border border-red-300 hover:border-red-700 transition-colors">Supprimer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white border border-gray-200 shadow-sm">
+        <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+            <h3 class="text-lg font-medium text-gray-900">Mouvements</h3>
+            <div class="flex space-x-2">
+                <a href="/admin/accounts/{{ account.id }}/transactions/create" class="text-xs uppercase font-bold text-gray-500 hover:text-black px-3 py-1 border border-gray-300 hover:border-black transition-colors">+ Transaction</a>
+                <button class="text-xs uppercase font-bold text-gray-500 hover:text-black px-3 py-1 border border-gray-300 hover:border-black transition-colors">Filtrer</button>
+                <button class="text-xs uppercase font-bold text-gray-500 hover:text-black px-3 py-1 border border-gray-300 hover:border-black transition-colors">Exporter</button>
+            </div>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr>
+                        <th class="px-6 py-3 bg-gray-50 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-100">Date</th>
+                        <th class="px-6 py-3 bg-gray-50 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-100">Description</th>
+                        <th class="px-6 py-3 bg-gray-50 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-100">Type</th>
+                        <th class="px-6 py-3 bg-gray-50 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-100 text-right">Montant</th>
+                        <th class="px-6 py-3 bg-gray-50 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-100 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    {% for transaction in transactions %}
+                    <tr class="hover:bg-gray-50 transition-colors duration-150">
+                        <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-500">{{ transaction.date|date("d/m/Y") }}</td>
+                        <td class="px-6 py-3 text-sm text-gray-900">{{ transaction.description }}</td>
+                        <td class="px-6 py-3 whitespace-nowrap text-xs text-gray-500 uppercase">{{ transaction.type }}</td>
+                        <td class="px-6 py-3 whitespace-nowrap text-sm text-right font-medium {{ transaction.amount < 0 ? 'text-red-600' : 'text-green-600' }}">
+                            {{ transaction.amount|number_format(2, ',', ' ') }} €
+                        </td>
+                        <td class="px-6 py-3 whitespace-nowrap text-right">
+                            <div class="flex justify-end space-x-2">
+                                <a href="/admin/transactions/{{ transaction.id }}/edit" class="text-xs uppercase font-bold text-gray-500 hover:text-black px-2 py-1 border border-gray-300 hover:border-black transition-colors">Modifier</a>
+                                <form action="/admin/transactions/{{ transaction.id }}/delete" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette transaction ?');" class="inline">
+                                    <button type="submit" class="text-xs uppercase font-bold text-red-500 hover:text-red-700 px-2 py-1 border border-red-300 hover:border-red-700 transition-colors">Supprimer</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">Aucun mouvement sur ce compte.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
