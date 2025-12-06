@@ -3,17 +3,17 @@
 {% block title %}Maintenance{% endblock %}
 
 {% block content %}
-    <h2 class="text-3xl font-light mb-8 text-gray-800">Maintenance</h2>
+    <h2 class="text-3xl font-light mb-8 text-primary">Maintenance</h2>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <!-- Backup section -->
         <div class="bg-white border border-gray-200 shadow-sm p-6">
-            <h3 class="text-xl font-medium text-gray-900 mb-4">Sauvegarde de la base de données</h3>
+            <h3 class="text-xl font-medium text-primary mb-4">Sauvegarde de la base de données</h3>
             <p class="text-gray-600 mb-6">Créez une sauvegarde complète de votre base de données. Les 5 sauvegardes les plus récentes sont conservées automatiquement.</p>
             
             <button 
                 onclick="createBackup()" 
-                class="w-full bg-black hover:bg-gray-800 text-white font-bold py-3 px-6 uppercase tracking-wider transition-colors mb-4"
+                class="w-full bg-primary hover:bg-blue-700 text-white font-bold py-3 px-6 uppercase tracking-wider transition-colors mb-4"
             >
                 Créer une sauvegarde
             </button>
@@ -56,7 +56,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
         <!-- Balance Snapshots section -->
         <div class="bg-white border border-gray-200 shadow-sm p-6">
-            <h3 class="text-xl font-medium text-gray-900 mb-4">Snapshots de solde</h3>
+            <h3 class="text-xl font-medium text-primary mb-4">Snapshots de solde</h3>
             <p class="text-gray-600 mb-6">Recalculez les snapshots quotidiens du solde global pour mettre à jour le graphique du dashboard.</p>
             
             {% if snapshotInfo.count > 0 %}
@@ -68,7 +68,9 @@
             
             <button 
                 onclick="rebuildSnapshots()" 
-                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 uppercase tracking-wider transition-colors mb-4"
+            <button 
+                onclick="rebuildSnapshots()" 
+                class="w-full bg-primary hover:bg-blue-700 text-white font-bold py-3 px-6 uppercase tracking-wider transition-colors mb-4"
             >
                 Recalculer tous les snapshots
             </button>
@@ -80,7 +82,7 @@
     <!-- Backups list -->
     <div class="mt-8 bg-white border border-gray-200 shadow-sm">
         <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
-            <h3 class="text-lg font-medium text-gray-900">Sauvegardes disponibles</h3>
+            <h3 class="text-lg font-medium text-primary">Sauvegardes disponibles</h3>
         </div>
         
         <div class="overflow-x-auto">
@@ -101,10 +103,10 @@
                         <td class="px-6 py-4 text-sm text-gray-500">{{ backup.size }}</td>
                         <td class="px-6 py-4 text-right">
                             <div class="flex justify-end space-x-2">
-                                <button onclick="restoreBackup('{{ backup.filename }}')" class="text-xs uppercase font-bold text-blue-600 hover:text-blue-800 px-2 py-1 border border-blue-300 hover:border-blue-800 transition-colors">
+                                <button onclick="restoreBackup('{{ backup.filename }}')" class="text-xs uppercase font-bold text-primary hover:text-blue-800 px-2 py-1 border border-blue-300 hover:border-blue-800 transition-colors">
                                     Restaurer
                                 </button>
-                                <a href="/admin/maintenance/backup/download/{{ backup.filename }}" class="text-xs uppercase font-bold text-gray-500 hover:text-black px-2 py-1 border border-gray-300 hover:border-black transition-colors">
+                                <a href="/maintenance/backup/download/{{ backup.filename }}" class="text-xs uppercase font-bold text-gray-500 hover:text-primary px-2 py-1 border border-gray-300 hover:border-primary transition-colors">
                                     Télécharger
                                 </a>
                                 <button onclick="deleteBackup('{{ backup.filename }}')" class="text-xs uppercase font-bold text-red-500 hover:text-red-700 px-2 py-1 border border-red-300 hover:border-red-700 transition-colors">
@@ -128,7 +130,7 @@
             const messageDiv = document.getElementById('backup_message');
             messageDiv.className = 'hidden';
             
-            fetch('/admin/maintenance/backup/create', {
+            fetch('/maintenance/backup/create', {
                 method: 'POST'
             })
             .then(response => response.json())
@@ -159,7 +161,7 @@
                 return;
             }
 
-            fetch('/admin/maintenance/backup/restore', {
+            fetch('/maintenance/backup/restore', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -185,7 +187,7 @@
                 return;
             }
 
-            fetch('/admin/maintenance/backup/delete', {
+            fetch('/maintenance/backup/delete', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -215,7 +217,7 @@
             messageDiv.textContent = 'Recalcul en cours...';
             messageDiv.classList.remove('hidden');
             
-            fetch('/admin/maintenance/snapshots/rebuild', {
+            fetch('/maintenance/snapshots/rebuild', {
                 method: 'POST'
             })
             .then(response => response.json())

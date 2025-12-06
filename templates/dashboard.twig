@@ -3,13 +3,13 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-    <h2 class="text-3xl font-light mb-8 text-gray-800">Vue d'ensemble</h2>
+    <h2 class="text-3xl font-light mb-8 text-primary">Vue d'ensemble</h2>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <!-- Total Balance Card -->
         <div class="bg-white p-6 border border-gray-200 shadow-sm">
             <div class="text-sm text-gray-500 uppercase tracking-wider mb-2">Solde Total</div>
-            <div class="text-3xl font-bold text-gray-900">{{ totalBalance|number_format(2, ',', ' ') }} €</div>
+            <div class="text-3xl font-bold text-primary">{{ totalBalance|number_format(2, ',', ' ') }} €</div>
         </div>
         
         <!-- Quick Stats or other info -->
@@ -21,12 +21,12 @@
                     {% set activeCount = activeCount + 1 %}
                 {% endif %}
             {% endfor %}
-            <div class="text-3xl font-bold text-gray-900">{{ activeCount }}/{{ accounts|length }}</div>
+            <div class="text-3xl font-bold text-primary">{{ activeCount }}/{{ accounts|length }}</div>
         </div>
 
         <div class="bg-white p-6 border border-gray-200 shadow-sm">
             <div class="text-sm text-gray-500 uppercase tracking-wider mb-2">Dernière opération</div>
-            <div class="text-3xl font-bold text-gray-900">
+            <div class="text-3xl font-bold text-primary">
                 {% if lastTransactionDate %}
                     {{ lastTransactionDate|date("d/m/Y") }}
                 {% else %}
@@ -39,7 +39,7 @@
     <!-- Balance Evolution Chart -->
     <div class="bg-white border border-gray-200 shadow-sm p-6 mb-8">
         <div class="flex justify-between items-center mb-6">
-            <h3 class="text-lg font-medium text-gray-900">Évolution du solde</h3>
+            <h3 class="text-lg font-medium text-primary">Évolution du solde</h3>
             <div class="flex items-center space-x-3">
                 <label class="text-sm text-gray-600">Afficher :</label>
                 <select 
@@ -60,22 +60,22 @@
     <!-- Accounts List -->
     <div class="bg-white border border-gray-200 shadow-sm mb-8">
         <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
-            <h3 class="text-lg font-medium text-gray-900">Comptes actifs</h3>
+            <h3 class="text-lg font-medium text-primary">Comptes actifs</h3>
         </div>
         <div class="divide-y divide-gray-100">
             {% set hasActiveAccounts = false %}
             {% for account in accounts %}
                 {% if account.is_active == 1 %}
                     {% set hasActiveAccounts = true %}
-                    <a href="/admin/accounts/{{ account.id }}" class="flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition-colors block">
+                    <a href="/accounts/{{ account.id }}" class="flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition-colors block">
                         <div>
-                            <div class="font-medium text-gray-900">{{ account.bank_name }} - {{ account.name }}</div>
+                            <div class="font-medium text-primary">{{ account.bank_name }} - {{ account.name }}</div>
                             {% if account.number %}
                             <div class="text-sm text-gray-500">{{ account.number }}</div>
                             {% endif %}
                         </div>
                         <div class="text-right">
-                            <div class="text-xl font-bold text-gray-900">{{ account.current_balance|number_format(2, ',', ' ') }} €</div>
+                            <div class="text-xl font-bold text-primary">{{ account.current_balance|number_format(2, ',', ' ') }} €</div>
                         </div>
                     </a>
                 {% endif %}
@@ -97,12 +97,12 @@
     {% if hasInactiveAccounts %}
     <div class="bg-white border border-gray-200 shadow-sm mb-8 opacity-60">
         <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
-            <h3 class="text-lg font-medium text-gray-900">Comptes inactifs</h3>
+            <h3 class="text-lg font-medium text-gray-500">Comptes inactifs</h3>
         </div>
         <div class="divide-y divide-gray-100">
             {% for account in accounts %}
                 {% if account.is_active == 0 %}
-                    <a href="/admin/accounts/{{ account.id }}" class="flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition-colors block">
+                    <a href="/accounts/{{ account.id }}" class="flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition-colors block">
                         <div>
                             <div class="font-medium text-gray-900">{{ account.bank_name }} - {{ account.name }} <span class="text-xs text-gray-400">(Inactif)</span></div>
                             {% if account.number %}
@@ -110,7 +110,7 @@
                             {% endif %}
                         </div>
                         <div class="text-right">
-                            <div class="text-xl font-bold text-gray-900">{{ account.current_balance|number_format(2, ',', ' ') }} €</div>
+                            <div class="text-xl font-bold text-gray-500">{{ account.current_balance|number_format(2, ',', ' ') }} €</div>
                         </div>
                     </a>
                 {% endif %}
@@ -132,14 +132,14 @@
                 datasets: [{
                     label: 'Solde global (€)',
                     data: {{ monthlyData.balances|json_encode|raw }},
-                    borderColor: '#000000',
-                    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                    borderColor: '#0B508C',
+                    backgroundColor: 'rgba(11, 80, 140, 0.1)',
                     borderWidth: 2,
                     fill: true,
                     tension: 0.4,
                     pointRadius: 4,
                     pointHoverRadius: 6,
-                    pointBackgroundColor: '#000000',
+                    pointBackgroundColor: '#0B508C',
                     pointBorderColor: '#ffffff',
                     pointBorderWidth: 2
                 }]
@@ -152,10 +152,10 @@
                         display: false
                     },
                     tooltip: {
-                        backgroundColor: '#000000',
+                        backgroundColor: '#0B508C',
                         titleColor: '#ffffff',
                         bodyColor: '#ffffff',
-                        borderColor: '#000000',
+                        borderColor: '#0B508C',
                         borderWidth: 1,
                         padding: 12,
                         displayColors: false,
@@ -212,9 +212,9 @@
                 // Show global balance (default)
                 balanceChart.data.datasets[0].label = 'Solde global (€)';
                 balanceChart.data.datasets[0].data = {{ monthlyData.balances|json_encode|raw }};
-                balanceChart.data.datasets[0].borderColor = '#000000';
-                balanceChart.data.datasets[0].backgroundColor = 'rgba(0, 0, 0, 0.1)';
-                balanceChart.data.datasets[0].pointBackgroundColor = '#000000';
+                balanceChart.data.datasets[0].borderColor = '#0B508C';
+                balanceChart.data.datasets[0].backgroundColor = 'rgba(11, 80, 140, 0.1)';
+                balanceChart.data.datasets[0].pointBackgroundColor = '#0B508C';
                 
                 // Remove second dataset if exists
                 if (balanceChart.data.datasets.length > 1) {
@@ -227,7 +227,7 @@
             }
             
             // Fetch account balance data
-            fetch(`/admin/api/account-balance?account_id=${accountId}`)
+            fetch(`/api/account-balance?account_id=${accountId}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.error) {
@@ -238,9 +238,9 @@
                     // Replace the main dataset with account data
                     balanceChart.data.datasets[0].label = data.accountName;
                     balanceChart.data.datasets[0].data = data.balances;
-                    balanceChart.data.datasets[0].borderColor = '#3b82f6';
-                    balanceChart.data.datasets[0].backgroundColor = 'rgba(59, 130, 246, 0.1)';
-                    balanceChart.data.datasets[0].pointBackgroundColor = '#3b82f6';
+                    balanceChart.data.datasets[0].borderColor = '#44C1F2';
+                    balanceChart.data.datasets[0].backgroundColor = 'rgba(68, 193, 242, 0.1)';
+                    balanceChart.data.datasets[0].pointBackgroundColor = '#44C1F2';
                     
                     // Remove second dataset if exists
                     if (balanceChart.data.datasets.length > 1) {

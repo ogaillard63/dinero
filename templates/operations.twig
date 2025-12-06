@@ -3,37 +3,48 @@
 {% block title %}Opérations{% endblock %}
 
 {% block content %}
-    <h2 class="text-3xl font-light mb-8 text-gray-800">Opérations</h2>
+    <h2 class="text-3xl font-light mb-8 text-primary">Opérations</h2>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="flex flex-col-reverse lg:grid lg:grid-cols-3 gap-8">
+        
         <!-- Main content: Transactions list (2/3) -->
         <div class="lg:col-span-2">
             <div class="bg-white border border-gray-200 shadow-sm">
                 <div class="px-6 py-3 border-b border-gray-100 bg-gray-50">
                     <div class="mb-3">
-                        <input 
-                            type="text" 
-                            id="searchInput" 
-                            placeholder="Rechercher dans les opérations..." 
-                            class="shadow-none appearance-none border border-gray-300 w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:border-gray-500"
-                        >
+                        <div class="flex justify-between items-end mb-2">
+                            <label for="searchInput" class="text-sm font-medium text-gray-700">Recherche (min. 3 caractères, appuyez sur Entrée)</label>
+                            <span id="operationsCount" class="text-xs text-gray-500"></span>
+                        </div>
+                        <div class="relative">
+                            <input 
+                                type="text" 
+                                id="searchInput" 
+                                placeholder="Rechercher dans les opérations..." 
+                                class="shadow-none appearance-none border border-gray-300 w-full py-2 px-4 pr-10 text-gray-700 leading-tight focus:outline-none focus:border-gray-500"
+                            >
+                            <button 
+                                id="clearSearch" 
+                                onclick="clearSearchAndReload()" 
+                                class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 hidden"
+                                title="Effacer la recherche"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
-                    <div class="grid grid-cols-4 gap-3 text-sm">
-                        <div class="bg-white p-2 border border-gray-200">
-                            <div class="text-xs text-gray-500 uppercase">Affichées</div>
-                            <div class="text-base font-bold text-gray-900" id="visibleCount">{{ transactions|length }}</div>
+                    
+                    <!-- Total Cards (compact) -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="bg-white p-2 border border-gray-200 border-l-4 border-l-green-500">
+                            <div class="text-xs text-gray-500 uppercase tracking-wider">Crédits</div>
+                            <div class="text-base font-bold text-success" id="totalCredits">0,00 €</div>
                         </div>
-                        <div class="bg-white p-2 border border-gray-200">
-                            <div class="text-xs text-gray-500 uppercase">Total</div>
-                            <div class="text-base font-bold text-gray-900" id="totalCount">{{ transactions|length }}</div>
-                        </div>
-                        <div class="bg-green-50 p-2 border border-green-200">
-                            <div class="text-xs text-green-600 uppercase">Crédits</div>
-                            <div class="text-base font-bold text-green-600" id="creditTotal">0,00 €</div>
-                        </div>
-                        <div class="bg-red-50 p-2 border border-red-200">
-                            <div class="text-xs text-red-600 uppercase">Débits</div>
-                            <div class="text-base font-bold text-red-600" id="debitTotal">0,00 €</div>
+                        <div class="bg-white p-2 border border-gray-200 border-l-4 border-l-red-500">
+                            <div class="text-xs text-gray-500 uppercase tracking-wider">Débits</div>
+                            <div class="text-base font-bold text-red-600" id="totalDebits">0,00 €</div>
                         </div>
                     </div>
                 </div>
@@ -44,32 +55,40 @@
                             <tr>
                                 <th class="px-6 py-3 bg-gray-50 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-100">Date</th>
                                 <th class="px-6 py-3 bg-gray-50 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-100">Description</th>
-                                <th class="px-6 py-3 bg-gray-50 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-100">Type</th>
+
                                 <th class="px-6 py-3 bg-gray-50 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-100 text-right">Montant</th>
                                 <th class="px-6 py-3 bg-gray-50 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-100 text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100">
+                        <tbody class="divide-y divide-gray-100" id="transactionsTableBody">
                             {% for transaction in transactions %}
                             <tr class="hover:bg-gray-50 transition-colors duration-150">
                                 <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-500">{{ transaction.date|date("d/m/Y") }}</td>
                                 <td class="px-6 py-3 text-sm text-gray-900">{{ transaction.description }}</td>
-                                <td class="px-6 py-3 whitespace-nowrap text-xs text-gray-500 uppercase">{{ transaction.type }}</td>
-                                <td class="px-6 py-3 whitespace-nowrap text-sm text-right font-medium {{ transaction.amount < 0 ? 'text-red-600' : 'text-green-600' }}">
+
+                                <td class="px-6 py-3 whitespace-nowrap text-sm text-right font-medium {{ transaction.amount < 0 ? 'text-red-600' : 'text-success' }}">
                                     {{ transaction.amount|number_format(2, ',', ' ') }} €
                                 </td>
                                 <td class="px-6 py-3 whitespace-nowrap text-right">
                                     <div class="flex justify-end space-x-2">
-                                        <a href="/admin/transactions/{{ transaction.id }}/edit" class="text-xs uppercase font-bold text-gray-500 hover:text-black px-2 py-1 border border-gray-300 hover:border-black transition-colors">Modifier</a>
-                                        <form action="/admin/transactions/{{ transaction.id }}/delete" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette transaction ?');" class="inline">
-                                            <button type="submit" class="text-xs uppercase font-bold text-red-500 hover:text-red-700 px-2 py-1 border border-red-300 hover:border-red-700 transition-colors">Supprimer</button>
+                                        <a href="/transactions/{{ transaction.id }}/edit" class="text-gray-500 hover:text-primary hover:bg-blue-50 rounded transition-colors p-1 cursor-default" title="Modifier">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                            </svg>
+                                        </a>
+                                        <form action="/transactions/{{ transaction.id }}/delete" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette transaction ?');" class="inline">
+                                            <button type="submit" class="text-red-500 hover:text-red-700 hover:bg-red-50 rounded transition-colors p-1 cursor-default" title="Supprimer">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </button>
                                         </form>
                                     </div>
                                 </td>
                             </tr>
                             {% else %}
-                            <tr>
-                                <td colspan="5" class="px-6 py-8 text-center text-sm text-gray-500">
+                            <tr id="noTransactionsRow">
+                                <td colspan="4" class="px-6 py-8 text-center text-sm text-gray-500">
                                     {% if selected_account %}
                                         Aucune opération sur ce compte.
                                     {% else %}
@@ -81,20 +100,32 @@
                         </tbody>
                     </table>
                 </div>
+                
+                <!-- Load More Button -->
+                {% if transactions|length >= 50 %}
+                <div class="p-4 text-center border-t border-gray-100" id="loadMoreContainer">
+                    <button id="loadMoreBtn" onclick="loadMoreTransactions()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 px-6 rounded text-sm uppercase tracking-wider transition-colors">
+                        Charger plus d'opérations
+                    </button>
+                    <div id="loadingIndicator" class="hidden text-gray-500">
+                        Chargement...
+                    </div>
+                </div>
+                {% endif %}
             </div>
         </div>
 
         <!-- Sidebar: Account selector and Add button (1/3) -->
         <div class="lg:col-span-1">
             <div class="bg-white border border-gray-200 shadow-sm p-6 sticky top-6">
-                <h3 class="text-lg font-medium text-gray-900 mb-4 tracking-wider">Compte</h3>
+                <h3 class="text-lg font-medium text-primary mb-4 tracking-wider">Compte</h3>
                 
                 {% if accounts %}
                     <div class="mb-6">
                         <select 
                             id="account-selector" 
-                            class="shadow-none appearance-none border border-gray-300 w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:border-gray-500"
-                            onchange="window.location='/admin/operations?account_id=' + this.value"
+                            class="shadow-none appearance-none border border-gray-300 w-full py-3 px-4 text-sm text-gray-700 leading-tight focus:outline-none focus:border-gray-500"
+                            onchange="window.location='/operations?account_id=' + this.value"
                         >
                             {% for account in accounts %}
                             <option value="{{ account.id }}" {{ selected_account and selected_account.id == account.id ? 'selected' : '' }}>
@@ -107,11 +138,11 @@
                     {% if selected_account %}
                     <div class="mb-6 p-4 bg-gray-50 border border-gray-200">
                         <div class="text-xs text-gray-500 uppercase tracking-wider mb-1">Solde actuel</div>
-                        <div class="text-2xl font-bold text-gray-900">{{ selected_account.current_balance|number_format(2, ',', ' ') }} €</div>
+                        <div class="text-2xl font-bold text-primary">{{ selected_account.current_balance|number_format(2, ',', ' ') }} €</div>
                         <div class="text-xs text-gray-400 mt-1">{{ selected_account.number }}</div>
                     </div>
 
-                    <button onclick="openAddTransactionModal()" class="block w-full bg-black text-white text-center py-3 px-6 uppercase text-sm tracking-wider hover:bg-gray-800 transition-colors">
+                    <button onclick="openAddTransactionModal()" class="block w-full bg-success text-white text-center py-3 px-6 uppercase text-sm tracking-wider hover:bg-green-600 transition-colors">
                         + Ajouter une opération
                     </button>
                     {% endif %}
@@ -127,7 +158,7 @@
         <div class="bg-white border border-gray-200 shadow-lg max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
             <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
                 <h3 class="text-lg font-medium text-gray-900">Ajouter une opération</h3>
-                <button onclick="closeAddTransactionModal()" class="text-gray-500 hover:text-black">
+                <button onclick="closeAddTransactionModal()" class="text-gray-500 hover:text-primary">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="square" stroke-linejoin="miter" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
@@ -196,7 +227,7 @@
                         <button type="button" onclick="closeAddTransactionModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-8 focus:outline-none uppercase tracking-wider transition-colors duration-200">
                             Annuler
                         </button>
-                        <button type="submit" class="bg-black hover:bg-gray-800 text-white font-bold py-3 px-8 focus:outline-none uppercase tracking-wider transition-colors duration-200">
+                        <button type="submit" class="bg-success hover:bg-green-600 text-white font-bold py-3 px-8 focus:outline-none uppercase tracking-wider transition-colors duration-200">
                             Ajouter
                         </button>
                     </div>
@@ -206,59 +237,285 @@
     </div>
 
     <script>
-        // Search and totals functionality
-        const searchInput = document.getElementById('searchInput');
-        const tbody = document.querySelector('tbody');
-        const transactionRows = tbody ? Array.from(tbody.querySelectorAll('tr')).filter(row => row.querySelectorAll('td').length > 1) : [];
-        
-        function updateTotals() {
-            let visibleCount = 0;
-            let creditTotal = 0;
-            let debitTotal = 0;
+        // Lazy loading variables
+        let currentOffset = {{ transactions|length }};
+        const limit = 50;
+        const accountId = '{{ selected_account.id }}';
+        let hasMoreTransactions = {{ transactions|length >= 50 ? 'true' : 'false' }};
+        let currentSearchTerm = '';
+        let searchTimer;
+
+        function loadMoreTransactions() {
+            if (!hasMoreTransactions) return;
             
-            transactionRows.forEach(row => {
-                if (row.style.display !== 'none') {
-                    visibleCount++;
+            const btn = document.getElementById('loadMoreBtn');
+            const indicator = document.getElementById('loadingIndicator');
+            const loadMoreContainer = document.getElementById('loadMoreContainer');
+            
+            if (btn) btn.classList.add('hidden');
+            if (indicator) indicator.classList.remove('hidden');
+            
+            fetch(`/api/transactions?account_id=${accountId}&offset=${currentOffset}&limit=${limit}&search=${encodeURIComponent(currentSearchTerm)}`)
+                .then(async response => {
+                    const text = await response.text();
+                    try {
+                        const data = JSON.parse(text);
+                        if (!response.ok) {
+                             throw new Error(data.error || 'Server error: ' + response.status);
+                        }
+                        return data;
+                    } catch (e) {
+                         console.error('Failed to parse response:', text);
+                         throw new Error('Erreur serveur (réponse invalide)');
+                    }
+                })
+                .then(data => {
+                    const tbody = document.getElementById('transactionsTableBody');
                     
-                    // Get amount from the row
-                    const amountCell = row.querySelector('td:nth-child(4)');
-                    if (amountCell) {
-                        const amountText = amountCell.textContent.trim();
-                        const amount = parseFloat(amountText.replace(/\s/g, '').replace(',', '.').replace('€', ''));
+                    if (data.transactions && data.transactions.length > 0) {
+                        data.transactions.forEach(transaction => {
+                            const date = new Date(transaction.date).toLocaleDateString('fr-FR');
+                            const amount = parseFloat(transaction.amount).toFixed(2).replace('.', ',') + ' €';
+                            const amountColor = transaction.amount < 0 ? 'text-red-600' : 'text-success';
+                            
+                            const tr = document.createElement('tr');
+                            tr.className = 'hover:bg-gray-50 transition-colors duration-150';
+                            tr.innerHTML = `
+                                <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-500">${date}</td>
+                                <td class="px-6 py-3 text-sm text-gray-900">${transaction.description}</td>
+
+                                <td class="px-6 py-3 whitespace-nowrap text-sm text-right font-medium ${amountColor}">
+                                    ${amount}
+                                </td>
+                                <td class="px-6 py-3 whitespace-nowrap text-right">
+                                    <div class="flex justify-end space-x-2">
+                                        <a href="/transactions/${transaction.id}/edit" class="text-gray-500 hover:text-primary hover:bg-blue-50 rounded transition-colors p-1 cursor-default" title="Modifier">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                            </svg>
+                                        </a>
+                                        <form action="/transactions/${transaction.id}/delete" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette transaction ?');" class="inline">
+                                            <button type="submit" class="text-red-500 hover:text-red-700 hover:bg-red-50 rounded transition-colors p-1 cursor-default" title="Supprimer">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            `;
+                            tbody.appendChild(tr);
+                        });
                         
-                        if (amount > 0) {
-                            creditTotal += amount;
+                        currentOffset += data.transactions.length;
+                        
+                        // If we got fewer transactions than limit, we're likely at the end
+                        if (data.transactions.length < limit) {
+                            hasMoreTransactions = false;
+                            if (loadMoreContainer) loadMoreContainer.classList.add('hidden');
                         } else {
-                            debitTotal += Math.abs(amount);
+                            if (loadMoreContainer) loadMoreContainer.classList.remove('hidden');
+                            if (btn) btn.classList.remove('hidden');
+                        }
+                    } else {
+                        // No transactions returned
+                        if (currentOffset === 0) {
+                            // If this was a fresh search and no results
+                             tbody.innerHTML = '<tr id="noTransactionsRow"><td colspan="4" class="px-6 py-8 text-center text-sm text-gray-500">Aucune opération trouvée.</td></tr>';
+                        }
+                        
+                        hasMoreTransactions = false;
+                        if (loadMoreContainer) loadMoreContainer.classList.add('hidden');
+                    }
+                    
+                    if (indicator) indicator.classList.add('hidden');
+                    updateTotals();
+                    updateCount();
+                })
+                .catch(error => {
+                    console.error('Error loading transactions:', error);
+                    if (btn) btn.textContent = error.message || 'Erreur lors du chargement';
+                    if (btn) btn.classList.remove('hidden');
+                    if (indicator) indicator.classList.add('hidden');
+                });
+        }
+    
+
+        function updateCount() {
+            const countEl = document.getElementById('operationsCount');
+            const totalTransactions = {{ total_transactions }};
+            
+            if(countEl) {
+                countEl.textContent = totalTransactions + ' opération' + (totalTransactions > 1 ? 's' : '');
+            }
+        }
+
+        function updateTotals() {
+            let totalCredits = 0;
+            let totalDebits = 0;
+            
+            const rows = document.querySelectorAll('#transactionsTableBody tr');
+            
+            rows.forEach(row => {
+                if (row.id === 'noTransactionsRow' || row.style.display === 'none') return;
+                
+                const amountCell = row.children[2];
+                if (amountCell) {
+                    let amountText = amountCell.textContent.trim();
+                    amountText = amountText.replace(' €', '').replace(/\s/g, '').replace(',', '.');
+                    const amount = parseFloat(amountText);
+                    
+                    if (!isNaN(amount)) {
+                        if (amount > 0) {
+                            totalCredits += amount;
+                        } else {
+                            totalDebits += amount;
                         }
                     }
                 }
             });
             
-            document.getElementById('visibleCount').textContent = visibleCount;
-            document.getElementById('creditTotal').textContent = creditTotal.toFixed(2).replace('.', ',') + ' €';
-            document.getElementById('debitTotal').textContent = debitTotal.toFixed(2).replace('.', ',') + ' €';
+            document.getElementById('totalCredits').textContent = totalCredits.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+            document.getElementById('totalDebits').textContent = totalDebits.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
         }
+
+        // Search functionality (Server-side, triggered on Enter)
+        const searchInput = document.getElementById('searchInput');
+        const clearBtn = document.getElementById('clearSearch');
+        let isSearchActive = false;
         
         if (searchInput) {
-            searchInput.addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase();
-                
-                transactionRows.forEach(row => {
-                    const text = row.textContent.toLowerCase();
-                    if (text.includes(searchTerm)) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const searchTerm = this.value.trim();
+                    
+                    // Minimum 3 characters
+                    if (searchTerm.length < 3) {
+                        alert('Veuillez saisir au moins 3 caractères pour la recherche');
+                        return;
                     }
-                });
-                
-                updateTotals();
+                    
+                    performSearch(searchTerm);
+                }
             });
             
-            // Initial totals calculation
-            updateTotals();
+            // Auto-reset when search field is cleared
+            searchInput.addEventListener('input', function() {
+                if (this.value.trim() === '' && isSearchActive) {
+                    clearSearchAndReload();
+                }
+            });
         }
+        
+        function performSearch(searchTerm) {
+            isSearchActive = true;
+            currentSearchTerm = searchTerm;
+            
+            // Show clear button
+            clearBtn.classList.remove('hidden');
+            
+            // Clear table
+            const tbody = document.getElementById('transactionsTableBody');
+            tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-sm text-gray-500">Recherche en cours...</td></tr>';
+            
+            // Hide lazy loading container during search
+            const loadMoreContainer = document.getElementById('loadMoreContainer');
+            if (loadMoreContainer) loadMoreContainer.classList.add('hidden');
+            
+            // Fetch ALL matching results (no limit)
+            fetch(`/api/transactions?account_id=${accountId}&search=${encodeURIComponent(searchTerm)}&limit=9999`)
+                .then(async response => {
+                    const text = await response.text();
+                    try {
+                        const data = JSON.parse(text);
+                        if (!response.ok) {
+                             throw new Error(data.error || 'Server error: ' + response.status);
+                        }
+                        return data;
+                    } catch (e) {
+                         console.error('Failed to parse response:', text);
+                         throw new Error('Erreur serveur (réponse invalide)');
+                    }
+                })
+                .then(data => {
+                    tbody.innerHTML = '';
+                    
+                    if (data.transactions && data.transactions.length > 0) {
+                        data.transactions.forEach(transaction => {
+                            const date = new Date(transaction.date).toLocaleDateString('fr-FR');
+                            const amount = parseFloat(transaction.amount).toFixed(2).replace('.', ',') + ' €';
+                            const amountColor = transaction.amount < 0 ? 'text-red-600' : 'text-success';
+                            
+                            // Highlight search term in description
+                            let description = transaction.description;
+                            if (searchTerm) {
+                                const regex = new RegExp(`(${searchTerm})`, 'gi');
+                                description = description.replace(regex, '<mark class="bg-yellow-200 px-1">$1</mark>');
+                            }
+                            
+                            const tr = document.createElement('tr');
+                            tr.className = 'hover:bg-gray-50 transition-colors duration-150';
+                            tr.innerHTML = `
+                                <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-500">${date}</td>
+                                <td class="px-6 py-3 text-sm text-gray-900">${description}</td>
+
+                                <td class="px-6 py-3 whitespace-nowrap text-sm text-right font-medium ${amountColor}">
+                                    ${amount}
+                                </td>
+                                <td class="px-6 py-3 whitespace-nowrap text-right">
+                                    <div class="flex justify-end space-x-2">
+                                        <a href="/transactions/${transaction.id}/edit" class="text-gray-500 hover:text-primary hover:bg-blue-50 rounded transition-colors p-1 cursor-default" title="Modifier">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                            </svg>
+                                        </a>
+                                        <form action="/transactions/${transaction.id}/delete" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette transaction ?');" class="inline">
+                                            <button type="submit" class="text-red-500 hover:text-red-700 hover:bg-red-50 rounded transition-colors p-1 cursor-default" title="Supprimer">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            `;
+                            tbody.appendChild(tr);
+                        });
+                    } else {
+                        tbody.innerHTML = '<tr id="noTransactionsRow"><td colspan="4" class="px-6 py-8 text-center text-sm text-gray-500">Aucune opération trouvée.</td></tr>';
+                    }
+                    
+                    updateTotals();
+                    
+                    // Update count to show search results
+                    const countEl = document.getElementById('operationsCount');
+                    const resultCount = data.transactions ? data.transactions.length : 0;
+                    if(countEl) {
+                        countEl.textContent = resultCount + ' résultat' + (resultCount > 1 ? 's' : '');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error searching transactions:', error);
+                    tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-sm text-red-500">Erreur lors de la recherche</td></tr>';
+                });
+        }
+        
+        function clearSearchAndReload() {
+            isSearchActive = false;
+            currentSearchTerm = '';
+            searchInput.value = '';
+            clearBtn.classList.add('hidden');
+            
+            // Reload the page to restore initial state with lazy loading
+            window.location.reload();
+        }
+        
+        // Initial calculation
+        document.addEventListener('DOMContentLoaded', function() {
+            updateTotals();
+            updateCount();
+        });
         
         function openAddTransactionModal() {
             document.getElementById('addTransactionModal').classList.remove('hidden');
@@ -280,7 +537,7 @@
             const formData = new FormData(this);
             const accountId = formData.get('account_id');
             
-            fetch(`/admin/accounts/${accountId}/transactions/create`, {
+            fetch(`/accounts/${accountId}/transactions/create`, {
                 method: 'POST',
                 body: formData
             })
@@ -309,6 +566,25 @@
         document.getElementById('addTransactionModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeAddTransactionModal();
+            }
+        });
+        
+        // Setup Intersection Observer for Infinite Scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadMoreContainer = document.getElementById('loadMoreContainer');
+            if (loadMoreContainer) {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const btn = document.getElementById('loadMoreBtn');
+                            if (btn && !btn.classList.contains('hidden')) {
+                                loadMoreTransactions();
+                            }
+                        }
+                    });
+                }, { rootMargin: '200px' });
+                
+                observer.observe(loadMoreContainer);
             }
         });
     </script>

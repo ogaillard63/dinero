@@ -10,9 +10,11 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#1f2937',
-                        secondary: '#4b5563',
-                        accent: '#000000',
+                        primary: '#0B508C', // Dark Blue
+                        secondary: '#44C1F2', // Light Blue
+                        success: '#2DA661', // Green
+                        'success-light': '#74D971', // Light Green
+                        warning: '#BF7C2A', // Orange
                     }
                 }
             }
@@ -34,27 +36,43 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #555; 
         }
+        
+        @media (max-width: 640px) {
+            html {
+                font-size: 14px;
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans antialiased">
 
     <div class="flex h-screen overflow-hidden">
+        
+        <!-- Mobile Sidebar Overlay -->
+        <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden md:hidden transition-opacity duration-200"></div>
+
         <!-- Sidebar -->
-        <aside class="w-64 bg-white border-r border-gray-200 min-h-screen">
-            <div class="p-6 border-b border-gray-200">
-                <h1 class="text-2xl font-light tracking-wider text-gray-800 flex items-center">
+        <aside id="sidebar" class="fixed inset-y-0 left-0 z-30 w-64 bg-white border-r border-gray-200 transform -translate-x-full md:relative md:translate-x-0 transition-transform duration-300 ease-in-out">
+            <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+                <h1 class="text-2xl font-light tracking-wider text-primary flex items-center">
                     <svg class="w-8 h-8 mr-3" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/>
                         <path d="M12 6v12M9 9h4.5a1.5 1.5 0 0 1 0 3H9m0 0h5.5a1.5 1.5 0 0 1 0 3H9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                     </svg>
                     DINERO
                 </h1>
+                <!-- Close button for mobile -->
+                <button onclick="toggleSidebar()" class="md:hidden text-gray-500 hover:text-primary focus:outline-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
             </div>
             
-            <nav class="flex-1 py-4">
+            <nav class="flex-1 py-4 overflow-y-auto">
                 <ul class="space-y-1 px-2">
                     <li>
-                        <a href="/admin/dashboard" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors">
+                        <a href="/dashboard" class="flex items-center px-4 py-3 text-gray-600 hover:bg-blue-50 hover:text-primary transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="square" stroke-linejoin="miter" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                             </svg>
@@ -62,7 +80,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="/admin/operations" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors">
+                        <a href="/operations" class="flex items-center px-4 py-3 text-gray-600 hover:bg-blue-50 hover:text-primary transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="square" stroke-linejoin="miter" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                             </svg>
@@ -70,7 +88,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="/admin/banks" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors">
+                        <a href="/banks" class="flex items-center px-4 py-3 text-gray-600 hover:bg-blue-50 hover:text-primary transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="square" stroke-linejoin="miter" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                             </svg>
@@ -78,7 +96,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="/admin/maintenance" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors">
+                        <a href="/maintenance" class="flex items-center px-4 py-3 text-gray-600 hover:bg-blue-50 hover:text-primary transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="square" stroke-linejoin="miter" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                                 <path stroke-linecap="square" stroke-linejoin="miter" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -87,11 +105,19 @@
                         </a>
                     </li>
                     <li>
-                        <a href="/admin/import" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors">
+                        <a href="/import" class="flex items-center px-4 py-3 text-gray-600 hover:bg-blue-50 hover:text-primary transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="square" stroke-linejoin="miter" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                             </svg>
                             Import
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/about" class="flex items-center px-4 py-3 text-gray-600 hover:bg-blue-50 hover:text-primary transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            A propos
                         </a>
                     </li>
                 </ul>
@@ -107,13 +133,49 @@
             </div>
         </aside>
 
-        <!-- Main Content -->
-        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50">
-            <div class="container mx-auto px-6 py-8">
-                {% block content %}{% endblock %}
-            </div>
-        </main>
+        <!-- Main Content Column -->
+        <div class="flex-1 flex flex-col overflow-hidden w-full">
+            <!-- Mobile Header -->
+            <header class="md:hidden bg-white border-b border-gray-200 p-4 flex justify-between items-center">
+                <div class="flex items-center">
+                    <svg class="w-8 h-8 mr-2 text-primary" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M12 6v12M9 9h4.5a1.5 1.5 0 0 1 0 3H9m0 0h5.5a1.5 1.5 0 0 1 0 3H9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                    <span class="text-xl font-light tracking-wider text-primary">DINERO</span>
+                </div>
+                <button onclick="toggleSidebar()" class="text-gray-600 hover:text-primary focus:outline-none p-2 border border-gray-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </header>
+
+            <!-- Page Content -->
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50">
+                <div class="container mx-auto px-4 md:px-6 py-6 md:py-8">
+                    {% block content %}{% endblock %}
+                </div>
+            </main>
+        </div>
     </div>
 
+    <script>
+        // Sidebar Toggle for Mobile
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            
+            if (sidebar.classList.contains('-translate-x-full')) {
+                // Open
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                // Close
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        }
+    </script>
 </body>
 </html>

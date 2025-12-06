@@ -4,8 +4,8 @@
 
 {% block content %}
     <div class="flex justify-between items-center mb-8">
-        <h2 class="text-3xl font-light text-gray-800">Mes Banques</h2>
-        <a href="/admin/banks/create" class="bg-black text-white px-6 py-2 uppercase text-sm tracking-wider hover:bg-gray-800 transition-colors">Ajouter une banque</a>
+        <h2 class="text-3xl font-light text-primary">Mes Banques</h2>
+        <a href="/banks/create" class="bg-success text-white px-6 py-2 uppercase text-sm tracking-wider hover:bg-green-600 transition-colors">Ajouter une banque</a>
     </div>
 
     <div class="space-y-8">
@@ -13,13 +13,13 @@
         <div class="bg-white border border-gray-200 shadow-sm">
             <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
                 <div>
-                    <h3 class="text-xl font-medium text-gray-900">{{ bank.name }}</h3>
+                    <h3 class="text-xl font-medium text-primary">{{ bank.name }}</h3>
                     <span class="text-sm text-gray-500">{{ bank.accounts|length }} comptes</span>
                 </div>
                 <div class="flex space-x-2">
-                    <a href="/admin/banks/{{ bank.id }}/edit" class="text-xs uppercase font-bold text-gray-500 hover:text-black px-3 py-1 border border-gray-300 hover:border-black transition-colors">Modifier</a>
-                    <a href="/admin/accounts/create?bank_id={{ bank.id }}" class="text-xs uppercase font-bold text-gray-500 hover:text-black px-3 py-1 border border-gray-300 hover:border-black transition-colors">+ Compte</a>
-                    <form action="/admin/banks/{{ bank.id }}/delete" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette banque et tous ses comptes ?');" class="inline">
+                    <a href="/banks/{{ bank.id }}/edit" class="text-xs uppercase font-bold text-gray-500 hover:text-primary px-3 py-1 border border-gray-300 hover:border-primary transition-colors">Modifier</a>
+                    <a href="/accounts/create?bank_id={{ bank.id }}" class="text-xs uppercase font-bold text-gray-500 hover:text-primary px-3 py-1 border border-gray-300 hover:border-primary transition-colors">+ Compte</a>
+                    <form action="/banks/{{ bank.id }}/delete" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette banque et tous ses comptes ?');" class="inline">
                         <button type="submit" class="text-xs uppercase font-bold text-red-500 hover:text-red-700 px-3 py-1 border border-red-300 hover:border-red-700 transition-colors">Supprimer</button>
                     </form>
                 </div>
@@ -35,8 +35,8 @@
                     </div>
                     <div class="flex-1 flex items-center justify-between">
                         <div class="flex-1">
-                            <a href="/admin/accounts/{{ account.id }}" class="text-gray-900 hover:text-black font-medium">
-                                {{ account.name }}{% if account.is_active == 0 %} <span class="text-xs text-gray-400">(Inactif)</span>{% endif %}
+                            <a href="/accounts/{{ account.id }}" class="text-gray-900 hover:text-primary font-medium">
+                                {{ account.name }}
                             </a>
                             {% if account.number %}
                             <span class="text-sm text-gray-500 ml-2">{{ account.number }}</span>
@@ -44,7 +44,7 @@
                         </div>
                         <div class="flex items-center space-x-6">
                             <span class="text-sm text-gray-500">{{ account.transaction_count }} op.</span>
-                            <span class="text-lg font-bold text-gray-900 min-w-[120px] text-right">
+                            <span class="text-lg font-bold text-primary min-w-[120px] text-right">
                                 {{ account.current_balance|number_format(2, ',', ' ') }} €
                             </span>
                         </div>
@@ -86,7 +86,7 @@
                         });
                         
                         // Send update to server
-                        fetch('/admin/accounts/update-order', {
+                        fetch('/accounts/update-order', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',

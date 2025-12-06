@@ -148,7 +148,7 @@
                 return;
             }
 
-            fetch('/admin/import/parse', {
+            fetch('/import/parse', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -333,7 +333,7 @@
                 amount: row[amountCol]
             }));
 
-            fetch('/admin/import/import', {
+            fetch('/import/import', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
