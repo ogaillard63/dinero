@@ -1,7 +1,13 @@
+DirectoryIndex index.php
+
 <IfModule mod_rewrite.c>
     RewriteEngine On
     
-    # Rediriger tout vers le dossier public
-    RewriteCond %{REQUEST_URI} !^/public/
-    RewriteRule ^(.*)$ public/$1 [L]
+    # Si le fichier ou dossier existe, le servir directement
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    
+    # Sinon, tout passer à index.php
+    RewriteRule ^ index.php [L]
 </IfModule>

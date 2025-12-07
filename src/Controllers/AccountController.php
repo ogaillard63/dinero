@@ -15,7 +15,7 @@ class AccountController extends BaseController {
         $account = $stmt->fetch();
 
         if (!$account) {
-            header('Location: /admin/banks');
+            header('Location: /banks');
             exit();
         }
 
@@ -85,7 +85,7 @@ class AccountController extends BaseController {
             'is_active' => $is_active
         ]);
 
-        header('Location: /admin/banks');
+        header('Location: /banks');
         exit();
     }
 
@@ -95,7 +95,7 @@ class AccountController extends BaseController {
         $account = $stmt->fetch();
 
         if (!$account) {
-            header('Location: /admin/banks');
+            header('Location: /banks');
             exit();
         }
 
@@ -147,7 +147,7 @@ class AccountController extends BaseController {
             'id' => $id
         ]);
 
-        header('Location: /admin/accounts/' . $id);
+        header('Location: /accounts/' . $id);
         exit();
     }
 
@@ -155,7 +155,7 @@ class AccountController extends BaseController {
         $stmt = $this->db->prepare("DELETE FROM accounts WHERE id = :id");
         $stmt->execute(['id' => $id]);
 
-        header('Location: /admin/banks');
+        header('Location: /banks');
         exit();
     }
 

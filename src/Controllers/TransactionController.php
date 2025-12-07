@@ -15,7 +15,7 @@ class TransactionController extends BaseController {
         $account = $stmt->fetch();
 
         if (!$account) {
-            header('Location: /admin/banks');
+            header('Location: /banks');
             exit();
         }
 
@@ -68,7 +68,7 @@ class TransactionController extends BaseController {
             'type' => $type
         ]);
 
-        header('Location: /admin/accounts/' . $account_id);
+        header('Location: /accounts/' . $account_id);
         exit();
     }
 
@@ -78,7 +78,7 @@ class TransactionController extends BaseController {
         $transaction = $stmt->fetch();
 
         if (!$transaction) {
-            header('Location: /admin/banks');
+            header('Location: /banks');
             exit();
         }
 
@@ -109,7 +109,7 @@ class TransactionController extends BaseController {
         $transaction = $stmt->fetch();
 
         if (!$transaction) {
-            header('Location: /admin/banks');
+            header('Location: /banks');
             exit();
         }
 
@@ -151,7 +151,7 @@ class TransactionController extends BaseController {
             'id' => $id
         ]);
 
-        header('Location: /admin/accounts/' . $transaction['account_id']);
+        header('Location: /accounts/' . $transaction['account_id']);
         exit();
     }
 
@@ -161,14 +161,14 @@ class TransactionController extends BaseController {
         $transaction = $stmt->fetch();
 
         if (!$transaction) {
-            header('Location: /admin/banks');
+            header('Location: /banks');
             exit();
         }
 
         $stmt = $this->db->prepare("DELETE FROM transactions WHERE id = :id");
         $stmt->execute(['id' => $id]);
 
-        header('Location: /admin/accounts/' . $transaction['account_id']);
+        header('Location: /accounts/' . $transaction['account_id']);
         exit();
     }
 }

@@ -41,7 +41,7 @@ class BankController extends BaseController {
         $bank = $stmt->fetch();
 
         if (!$bank) {
-            header('Location: /admin/banks');
+            header('Location: /banks');
             exit();
         }
 
@@ -70,7 +70,7 @@ class BankController extends BaseController {
         $stmt = $this->db->prepare("INSERT INTO banks (name) VALUES (:name)");
         $stmt->execute(['name' => $name]);
 
-        header('Location: /admin/banks');
+        header('Location: /banks');
         exit();
     }
 
@@ -80,7 +80,7 @@ class BankController extends BaseController {
         $bank = $stmt->fetch();
 
         if (!$bank) {
-            header('Location: /admin/banks');
+            header('Location: /banks');
             exit();
         }
 
@@ -105,7 +105,7 @@ class BankController extends BaseController {
         $stmt = $this->db->prepare("UPDATE banks SET name = :name WHERE id = :id");
         $stmt->execute(['name' => $name, 'id' => $id]);
 
-        header('Location: /admin/banks');
+        header('Location: /banks');
         exit();
     }
 
@@ -113,7 +113,7 @@ class BankController extends BaseController {
         $stmt = $this->db->prepare("DELETE FROM banks WHERE id = :id");
         $stmt->execute(['id' => $id]);
 
-        header('Location: /admin/banks');
+        header('Location: /banks');
         exit();
     }
 }
