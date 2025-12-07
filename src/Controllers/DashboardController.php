@@ -31,11 +31,19 @@ class DashboardController extends BaseController {
         // Get monthly balance evolution (last 12 months)
         $monthlyData = $this->getMonthlyBalanceEvolution();
         
+        // Calculate balance variation over 1 month
+        $oneMonthAgo = date('Y-m-d', strtotime('-30 days'));
+        $balanceOneMonthAgo = $this->calculateTotalBalanceAtDate($oneMonthAgo);
+        $balanceVariation = $totalBalance - $balanceOneMonthAgo;
+        $balanceVariationPercent = $balanceOneMonthAgo != 0 ? ($balanceVariation / abs($balanceOneMonthAgo)) * 100 : 0;
+        
         $this->render('dashboard.twig', [
             'totalBalance' => $totalBalance,
             'accounts' => $accounts,
             'lastTransactionDate' => $lastTransactionDate,
-            'monthlyData' => $monthlyData
+            'monthlyData' => $monthlyData,
+            'balanceVariation' => $balanceVariation,
+            'balanceVariationPercent' => $balanceVariationPercent
         ]);
     }
     

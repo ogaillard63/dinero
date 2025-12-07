@@ -130,22 +130,18 @@
 
             <!-- PWA Sync Section -->
             <div class="border-t border-gray-200 p-4 space-y-3">
-                <!-- Network Status -->
-                <div id="networkStatus" class="network-status online">
-                    <span class="status-dot"></span> En ligne
-                </div>
-                
                 <!-- Sync Button -->
-                <button id="syncButton" onclick="window.syncManager?.syncNow()" class="sync-button w-full">
-                    <svg id="syncIcon" class="sync-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <button id="syncButton" onclick="window.syncManager?.syncNow()" class="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium text-white transition-all bg-green-600 hover:bg-green-700">
+                    <svg id="syncIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                     </svg>
                     <span>Synchroniser</span>
                 </button>
                 
-                <!-- Sync Status -->
-                <div id="syncStatus" class="text-xs text-gray-500 text-center">
-                    Jamais synchronisé
+                <!-- Network & Sync Status -->
+                <div class="text-xs text-center space-y-1">
+                    <div id="networkStatus" class="text-green-600 font-medium">En ligne</div>
+                    <div id="syncStatus" class="text-gray-500">Jamais synchronisé</div>
                 </div>
             </div>
             

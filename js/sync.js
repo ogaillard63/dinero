@@ -76,9 +76,11 @@ class SyncManager {
             this.lastSyncTime = data.timestamp;
 
             // Enregistrer pour background sync si disponible
-            if ('serviceWorker' in navigator && 'sync' in self.registration) {
+            if ('serviceWorker' in navigator) {
                 const registration = await navigator.serviceWorker.ready;
-                await registration.sync.register('sync-data');
+                if (registration && 'sync' in registration) {
+                    await registration.sync.register('sync-data');
+                }
             }
 
             this.showNotification('Synchronisation réussie', 'success');
@@ -107,7 +109,8 @@ class SyncManager {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        return await response.json();
+        const json = await response.json();
+        return json.data || json; // Extraire .data si présent, sinon retourner tout
     }
 
     /**
@@ -220,14 +223,18 @@ class SyncManager {
      */
     updateNetworkStatus(isOnline) {
         const statusElement = document.getElementById('networkStatus');
-        if (!statusElement) return;
+        const syncButton = document.getElementById('syncButton');
+
+        if (!statusElement || !syncButton) return;
 
         if (isOnline) {
-            statusElement.className = 'network-status online';
-            statusElement.innerHTML = '<span class="status-dot"></span> En ligne';
+            statusElement.className = 'text-green-600 font-medium';
+            statusElement.textContent = 'En ligne';
+            syncButton.className = 'w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium text-white transition-all bg-green-600 hover:bg-green-700';
         } else {
-            statusElement.className = 'network-status offline';
-            statusElement.innerHTML = '<span class="status-dot"></span> Hors ligne';
+            statusElement.className = 'text-red-600 font-medium';
+            statusElement.textContent = 'Hors ligne';
+            syncButton.className = 'w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium text-white transition-all bg-red-600 hover:bg-red-700';
         }
     }
 

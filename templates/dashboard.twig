@@ -5,33 +5,20 @@
 {% block content %}
     <h2 class="text-3xl font-light mb-8 text-primary">Vue d'ensemble</h2>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="mb-8">
         <!-- Total Balance Card -->
         <div class="bg-white p-6 border border-gray-200 shadow-sm">
-            <div class="text-sm text-gray-500 uppercase tracking-wider mb-2">Solde Total</div>
-            <div class="text-3xl font-bold text-primary">{{ totalBalance|number_format(2, ',', ' ') }} €</div>
-        </div>
-        
-        <!-- Quick Stats or other info -->
-        <div class="bg-white p-6 border border-gray-200 shadow-sm">
-            <div class="text-sm text-gray-500 uppercase tracking-wider mb-2">Comptes Actifs</div>
-            {% set activeCount = 0 %}
-            {% for account in accounts %}
-                {% if account.is_active == 1 %}
-                    {% set activeCount = activeCount + 1 %}
-                {% endif %}
-            {% endfor %}
-            <div class="text-3xl font-bold text-primary">{{ activeCount }}/{{ accounts|length }}</div>
-        </div>
-
-        <div class="bg-white p-6 border border-gray-200 shadow-sm">
-            <div class="text-sm text-gray-500 uppercase tracking-wider mb-2">Dernière opération</div>
-            <div class="text-3xl font-bold text-primary">
-                {% if lastTransactionDate %}
-                    {{ lastTransactionDate|date("d/m/Y") }}
+            <div class="text-sm text-gray-500 uppercase tracking-wider mb-2 text-right">Solde Total</div>
+            <div class="text-3xl font-bold text-primary text-right">{{ totalBalance|number_format(2, ',', ' ') }} €</div>
+            <div class="text-sm text-right mt-2">
+                {% if balanceVariation > 0 %}
+                    <span class="text-green-600">↗ +{{ balanceVariation|number_format(2, ',', ' ') }} € ({{ balanceVariationPercent|number_format(1, ',', ' ') }}%)</span>
+                {% elseif balanceVariation < 0 %}
+                    <span class="text-red-600">↘ {{ balanceVariation|number_format(2, ',', ' ') }} € ({{ balanceVariationPercent|number_format(1, ',', ' ') }}%)</span>
                 {% else %}
-                    --
+                    <span class="text-gray-500">→ Aucune variation</span>
                 {% endif %}
+                <span class="text-gray-400 ml-1">sur 30j</span>
             </div>
         </div>
     </div>
@@ -69,7 +56,8 @@
                     {% set hasActiveAccounts = true %}
                     <a href="/accounts/{{ account.id }}" class="flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition-colors block">
                         <div>
-                            <div class="font-medium text-primary">{{ account.bank_name }} - {{ account.name }}</div>
+                            <div class="text-sm text-gray-500">{{ account.bank_name }}</div>
+                            <div class="font-medium text-primary">{{ account.name }}</div>
                             {% if account.number %}
                             <div class="text-sm text-gray-500">{{ account.number }}</div>
                             {% endif %}
