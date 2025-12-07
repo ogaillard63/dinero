@@ -11,6 +11,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../src/Controllers/BaseController.php';
 require_once __DIR__ . '/../src/Controllers/AboutController.php';
 require_once __DIR__ . '/../src/Controllers/OperationController.php';
+require_once __DIR__ . '/../src/Controllers/ApiController.php';
 
 use App\Controllers\AuthController;
 use App\Controllers\DashboardController;
@@ -22,6 +23,7 @@ use App\Controllers\ImportController;
 use App\Controllers\MaintenanceController;
 use App\Controllers\BalanceSnapshotController;
 use App\Controllers\AboutController;
+use App\Controllers\ApiController;
 
 $router = new \Bramus\Router\Router();
 
@@ -103,6 +105,12 @@ $router->get('/maintenance/backup/download/(.+)', 'App\Controllers\MaintenanceCo
 $router->post('/maintenance/backup/delete', 'App\Controllers\MaintenanceController@deleteBackup');
 $router->post('/maintenance/snapshots/rebuild', 'App\Controllers\MaintenanceController@rebuildSnapshots');
 
+// PWA API Routes
+$router->get('/api/accounts', 'App\Controllers\ApiController@getAccounts');
+$router->get('/api/operations', 'App\Controllers\ApiController@getOperations');
+$router->get('/api/banks', 'App\Controllers\ApiController@getBanks');
+$router->get('/api/dashboard', 'App\Controllers\ApiController@getDashboard');
+$router->get('/api/sync', 'App\Controllers\ApiController@sync');
 
 
 $router->run();

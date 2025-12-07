@@ -1,0 +1,10 @@
+# Ignore source files for icon generation
+logo-source.png
+logo-source.svg
+*.psd
+*.ai
+*.sketch
+
+# Keep the actual icon files
+!icon-*.png
+!README.md

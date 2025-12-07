@@ -1,0 +1,215 @@
+/* PWA Sync Notifications and Status Indicators */
+
+/* Notifications de synchronisation */
+.sync-notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 16px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 9999;
+    max-width: 300px;
+}
+
+.sync-notification.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.sync-notification.success {
+    background: #10b981;
+    color: white;
+}
+
+.sync-notification.error {
+    background: #ef4444;
+    color: white;
+}
+
+.sync-notification.warning {
+    background: #f59e0b;
+    color: white;
+}
+
+.sync-notification.info {
+    background: #3b82f6;
+    color: white;
+}
+
+/* Statut réseau */
+.network-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.network-status.online {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.network-status.offline {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* Bouton de synchronisation */
+.sync-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: #0B508C;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.sync-button:hover:not(:disabled) {
+    background: #094070;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(11, 80, 140, 0.3);
+}
+
+.sync-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.sync-button .sync-icon {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.3s ease;
+}
+
+.sync-button .sync-icon.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Indicateur PWA installée */
+.pwa-install-prompt {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    padding: 16px 24px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    max-width: 400px;
+    z-index: 9998;
+}
+
+.pwa-install-prompt button {
+    background: #0B508C;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.pwa-install-prompt button:hover {
+    background: #094070;
+}
+
+.pwa-install-prompt .close-btn {
+    background: transparent;
+    color: #64748b;
+    padding: 4px;
+}
+
+/* Badge de mise à jour disponible */
+.update-badge {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #10b981;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    cursor: pointer;
+    z-index: 9997;
+    transition: all 0.3s ease;
+}
+
+.update-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .sync-notification {
+        right: 10px;
+        bottom: 10px;
+        max-width: calc(100% - 20px);
+    }
+
+    .pwa-install-prompt {
+        left: 10px;
+        right: 10px;
+        transform: none;
+        max-width: none;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .update-badge {
+        right: 10px;
+        top: 10px;
+    }
+}
