@@ -27,7 +27,7 @@ class AccountController extends BaseController {
         $account['current_balance'] = $account['initial_balance'] + $transactions_total;
 
         // Get transactions
-        $stmt = $this->db->prepare("SELECT * FROM transactions WHERE account_id = :id ORDER BY date DESC");
+        $stmt = $this->db->prepare("SELECT * FROM transactions WHERE account_id = :id ORDER BY date DESC LIMIT 50");
         $stmt->execute(['id' => $id]);
         $transactions = $stmt->fetchAll();
 

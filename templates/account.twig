@@ -3,44 +3,48 @@
 {% block title %}Compte {{ account.name }}{% endblock %}
 
 {% block content %}
-    <div class="mb-8">
-        <a href="/banks" class="text-sm text-gray-500 hover:text-primary mb-4 inline-block">&larr; Retour aux banques</a>
+    <!-- Back link and page header -->
+    <div class="mb-4 md:mb-6">
+        <!-- Header layout -->
         <div class="flex justify-between items-end">
+            <!-- Account info -->
             <div>
-                <h2 class="text-3xl font-light text-primary">{{ account.name }}</h2>
-                <p class="text-gray-500">{{ account.bank_name }} - {{ account.number }}</p>
+                <h2 class="text-2xl md:text-3xl font-light text-primary">{{ account.name }}</h2>
+                <p class="text-sm md:text-base text-gray-500 mt-1"><a href="/banks" class="hover:text-primary hover:underline transition-colors">{{ account.bank_name }}</a></p>
             </div>
-            <div class="flex items-end space-x-4">
-                <div class="text-right">
-                    <div class="text-4xl font-bold text-primary">{{ account.current_balance|number_format(2, ',', ' ') }} €</div>
-                    <div class="text-sm text-gray-400 uppercase">Solde actuel</div>
-                </div>
-                <div class="flex space-x-2">
-                    <a href="/accounts/{{ account.id }}/edit" class="text-xs uppercase font-bold text-gray-500 hover:text-primary px-3 py-1 border border-gray-300 hover:border-primary transition-colors">Modifier</a>
-                    <form action="/accounts/{{ account.id }}/delete" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce compte ?');" class="inline">
-                        <button type="submit" class="text-xs uppercase font-bold text-red-500 hover:text-red-700 px-3 py-1 border border-red-300 hover:border-red-700 transition-colors">Supprimer</button>
-                    </form>
-                </div>
+            
+            <!-- Balance -->
+            <div class="text-right">
+                <div class="text-xs text-gray-400 uppercase tracking-wider">Solde actuel</div>
+                <div class="text-2xl md:text-3xl lg:text-4xl font-bold text-primary">{{ account.current_balance|number_format(2, ',', ' ') }} €</div>
             </div>
         </div>
     </div>
 
+    <!-- Transactions table -->
     <div class="bg-white border border-gray-200 shadow-sm">
-        <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
-            <h3 class="text-lg font-medium text-primary">Mouvements</h3>
-            <div class="flex space-x-2">
-                <a href="/accounts/{{ account.id }}/transactions/create" class="text-xs uppercase font-bold text-gray-500 hover:text-primary px-3 py-1 border border-gray-300 hover:border-primary transition-colors">+ Transaction</a>
-                <button class="text-xs uppercase font-bold text-gray-500 hover:text-primary px-3 py-1 border border-gray-300 hover:border-primary transition-colors">Filtrer</button>
-                <button class="text-xs uppercase font-bold text-gray-500 hover:text-primary px-3 py-1 border border-gray-300 hover:border-primary transition-colors">Exporter</button>
+        <!-- Table header with responsive actions -->
+        <div class="px-6 py-3 border-b border-gray-100 bg-gray-50">
+            <div class="flex justify-between items-center">
+                <h3 class="text-base md:text-lg font-medium text-primary">Liste des opérations</h3>
+                
+                <!-- Action button -->
+                <a href="/accounts/{{ account.id }}/transactions/create" class="btn-icon btn-icon-primary rounded" title="Ajouter une opération">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                </a>
             </div>
         </div>
+        
+        <!-- Scrollable table container -->
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr>
                         <th class="px-6 py-3 bg-gray-50 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-100">Date</th>
                         <th class="px-6 py-3 bg-gray-50 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-100">Description</th>
-                        <th class="px-6 py-3 bg-gray-50 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-100">Type</th>
+
                         <th class="px-6 py-3 bg-gray-50 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-100 text-right">Montant</th>
                         <th class="px-6 py-3 bg-gray-50 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-100 text-right">Actions</th>
                     </tr>
@@ -50,26 +54,160 @@
                     <tr class="hover:bg-gray-50 transition-colors duration-150">
                         <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-500">{{ transaction.date|date("d/m/Y") }}</td>
                         <td class="px-6 py-3 text-sm text-gray-900">{{ transaction.description }}</td>
-                        <td class="px-6 py-3 whitespace-nowrap text-xs text-gray-500 uppercase">{{ transaction.type }}</td>
+
                         <td class="px-6 py-3 whitespace-nowrap text-sm text-right font-medium {{ transaction.amount < 0 ? 'text-red-600' : 'text-success' }}">
                             {{ transaction.amount|number_format(2, ',', ' ') }} €
                         </td>
                         <td class="px-6 py-3 whitespace-nowrap text-right">
                             <div class="flex justify-end space-x-2">
-                                <a href="/transactions/{{ transaction.id }}/edit" class="text-xs uppercase font-bold text-gray-500 hover:text-primary px-2 py-1 border border-gray-300 hover:border-primary transition-colors">Modifier</a>
+                                <a href="/transactions/{{ transaction.id }}/edit" class="btn-icon btn-icon-primary rounded" title="Modifier">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                    </svg>
+                                </a>
                                 <form action="/transactions/{{ transaction.id }}/delete" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette transaction ?');" class="inline">
-                                    <button type="submit" class="text-xs uppercase font-bold text-red-500 hover:text-red-700 px-2 py-1 border border-red-300 hover:border-red-700 transition-colors">Supprimer</button>
+                                    <button type="submit" class="btn-icon btn-icon-danger rounded" title="Supprimer">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </button>
                                 </form>
                             </div>
                         </td>
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">Aucun mouvement sur ce compte.</td>
+                        <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500">Aucun mouvement sur ce compte.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+        
+        <!-- Load More Button -->
+        {% if transactions|length >= 50 %}
+        <div class="p-4 text-center border-t border-gray-100" id="loadMoreContainer">
+            <button id="loadMoreBtn" onclick="loadMoreTransactions()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 px-6 rounded text-sm uppercase tracking-wider transition-colors">
+                Charger plus d'opérations
+            </button>
+            <div id="loadingIndicator" class="hidden text-gray-500">
+                Chargement...
+            </div>
+        </div>
+        {% endif %}
     </div>
+
+    <script>
+        // Lazy loading variables
+        let currentOffset = {{ transactions|length }};
+        const limit = 50;
+        const accountId = '{{ account.id }}';
+        let hasMoreTransactions = {{ transactions|length >= 50 ? 'true' : 'false' }};
+
+        function loadMoreTransactions() {
+            if (!hasMoreTransactions) return;
+            
+            const btn = document.getElementById('loadMoreBtn');
+            const indicator = document.getElementById('loadingIndicator');
+            const loadMoreContainer = document.getElementById('loadMoreContainer');
+            
+            if (btn) btn.classList.add('hidden');
+            if (indicator) indicator.classList.remove('hidden');
+            
+            fetch(`/api/transactions?account_id=${accountId}&offset=${currentOffset}&limit=${limit}`)
+                .then(async response => {
+                    const text = await response.text();
+                    try {
+                        const data = JSON.parse(text);
+                        if (!response.ok) {
+                             throw new Error(data.error || 'Server error: ' + response.status);
+                        }
+                        return data;
+                    } catch (e) {
+                         console.error('Failed to parse response:', text);
+                         throw new Error('Erreur serveur (réponse invalide)');
+                    }
+                })
+                .then(data => {
+                    const tbody = document.querySelector('tbody');
+                    
+                    if (data.transactions && data.transactions.length > 0) {
+                        data.transactions.forEach(transaction => {
+                            const date = new Date(transaction.date).toLocaleDateString('fr-FR');
+                            const amount = parseFloat(transaction.amount).toFixed(2).replace('.', ',') + ' €';
+                            const amountColor = transaction.amount < 0 ? 'text-red-600' : 'text-success';
+                            
+                            const tr = document.createElement('tr');
+                            tr.className = 'hover:bg-gray-50 transition-colors duration-150';
+                            tr.innerHTML = `
+                                <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-500">${date}</td>
+                                <td class="px-6 py-3 text-sm text-gray-900">${transaction.description}</td>
+
+                                <td class="px-6 py-3 whitespace-nowrap text-sm text-right font-medium ${amountColor}">
+                                    ${amount}
+                                </td>
+                                <td class="px-6 py-3 whitespace-nowrap text-right">
+                                    <div class="flex justify-end space-x-2">
+                                        <a href="/transactions/${transaction.id}/edit" class="btn-icon btn-icon-primary rounded" title="Modifier">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                            </svg>
+                                        </a>
+                                        <form action="/transactions/${transaction.id}/delete" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette transaction ?');" class="inline">
+                                            <button type="submit" class="btn-icon btn-icon-danger rounded" title="Supprimer">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            `;
+                            tbody.appendChild(tr);
+                        });
+                        
+                        currentOffset += data.transactions.length;
+                        
+                        // If we got fewer transactions than limit, we're likely at the end
+                        if (data.transactions.length < limit) {
+                            hasMoreTransactions = false;
+                            if (loadMoreContainer) loadMoreContainer.classList.add('hidden');
+                        } else {
+                            if (loadMoreContainer) loadMoreContainer.classList.remove('hidden');
+                            if (btn) btn.classList.remove('hidden');
+                        }
+                    } else {
+                        hasMoreTransactions = false;
+                        if (loadMoreContainer) loadMoreContainer.classList.add('hidden');
+                    }
+                    
+                    if (indicator) indicator.classList.add('hidden');
+                })
+                .catch(error => {
+                    console.error('Error loading transactions:', error);
+                    if (btn) btn.textContent = error.message || 'Erreur lors du chargement';
+                    if (btn) btn.classList.remove('hidden');
+                    if (indicator) indicator.classList.add('hidden');
+                });
+        }
+
+        // Setup Intersection Observer for Infinite Scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadMoreContainer = document.getElementById('loadMoreContainer');
+            if (loadMoreContainer) {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const btn = document.getElementById('loadMoreBtn');
+                            if (btn && !btn.classList.contains('hidden')) {
+                                loadMoreTransactions();
+                            }
+                        }
+                    });
+                }, { rootMargin: '200px' });
+                
+                observer.observe(loadMoreContainer);
+            }
+        });
+    </script>
 {% endblock %}
