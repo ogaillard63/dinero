@@ -5,107 +5,38 @@
 {% block content %}
     <h2 class="text-3xl font-light mb-8 text-primary">Vue d'ensemble</h2>
 
-    <div class="mb-8">
+    <div class="grid grid-cols-2 gap-6 mb-8">
         <!-- Total Balance Card -->
         <div class="bg-white p-6 border border-gray-200 shadow-sm">
             <div class="text-sm text-gray-500 uppercase tracking-wider mb-2 text-right">Solde Total</div>
-            <div class="text-3xl font-bold text-primary text-right">{{ totalBalance|number_format(2, ',', ' ') }} €</div>
-            <div class="text-sm text-right mt-2">
+            <div class="text-3xl font-bold text-primary text-right">{{ totalBalance|number_format(0, ',', ' ') }} €</div>
+        </div>
+        
+        <!-- Balance Variation Card -->
+        <div class="bg-white p-6 border border-gray-200 shadow-sm">
+            <div class="text-sm text-gray-500 uppercase tracking-wider mb-2 text-right">Variation 30j</div>
+            <div class="text-3xl font-bold text-right">
                 {% if balanceVariation > 0 %}
-                    <span class="text-green-600">↗ +{{ balanceVariation|number_format(2, ',', ' ') }} € ({{ balanceVariationPercent|number_format(1, ',', ' ') }}%)</span>
+                    <span class="text-green-600">+{{ balanceVariation|number_format(2, ',', ' ') }} €</span>
                 {% elseif balanceVariation < 0 %}
-                    <span class="text-red-600">↘ {{ balanceVariation|number_format(2, ',', ' ') }} € ({{ balanceVariationPercent|number_format(1, ',', ' ') }}%)</span>
+                    <span class="text-red-600">{{ balanceVariation|number_format(2, ',', ' ') }} €</span>
                 {% else %}
-                    <span class="text-gray-500">→ Aucune variation</span>
+                    <span class="text-gray-500">0,00 €</span>
                 {% endif %}
-                <span class="text-gray-400 ml-1">sur 30j</span>
             </div>
         </div>
     </div>
 
     <!-- Balance Evolution Chart -->
-    <div class="bg-white border border-gray-200 shadow-sm p-6 mb-8">
-        <div class="flex justify-between items-center mb-6">
-            <h3 class="text-lg font-medium text-primary">Évolution du solde</h3>
-            <div class="flex items-center space-x-3">
-                <label class="text-sm text-gray-600">Afficher :</label>
-                <select 
-                    id="accountSelector" 
-                    class="shadow-none appearance-none border border-gray-300 py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:border-gray-500"
-                    onchange="toggleAccountOverlay(this.value)"
-                >
-                    <option value="">Solde global</option>
-                    {% for account in accounts %}
-                    <option value="{{ account.id }}">{{ account.bank_name }} - {{ account.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
+    <div class="bg-white border border-gray-200 shadow-sm p-4 md:p-6 mb-8">
+        <div class="mb-6">
+            <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Évolution du solde global</h3>
         </div>
-        <canvas id="balanceChart" height="80"></canvas>
-    </div>
-
-    <!-- Accounts List -->
-    <div class="bg-white border border-gray-200 shadow-sm mb-8">
-        <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
-            <h3 class="text-lg font-medium text-primary">Comptes actifs</h3>
-        </div>
-        <div class="divide-y divide-gray-100">
-            {% set hasActiveAccounts = false %}
-            {% for account in accounts %}
-                {% if account.is_active == 1 %}
-                    {% set hasActiveAccounts = true %}
-                    <a href="/accounts/{{ account.id }}" class="flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition-colors block">
-                        <div>
-                            <div class="text-sm text-gray-500">{{ account.bank_name }}</div>
-                            <div class="font-medium text-primary">{{ account.name }}</div>
-                            {% if account.number %}
-                            <div class="text-sm text-gray-500">{{ account.number }}</div>
-                            {% endif %}
-                        </div>
-                        <div class="text-right">
-                            <div class="text-xl font-bold text-primary">{{ account.current_balance|number_format(2, ',', ' ') }} €</div>
-                        </div>
-                    </a>
-                {% endif %}
-            {% endfor %}
-            {% if not hasActiveAccounts %}
-            <div class="px-6 py-8 text-center text-sm text-gray-500">Aucun compte actif</div>
-            {% endif %}
+        <div class="relative h-[250px] md:h-[350px] w-full">
+            <canvas id="balanceChart"></canvas>
         </div>
     </div>
 
-    <!-- Inactive Accounts List -->
-    {% set hasInactiveAccounts = false %}
-    {% for account in accounts %}
-        {% if account.is_active == 0 %}
-            {% set hasInactiveAccounts = true %}
-        {% endif %}
-    {% endfor %}
-    
-    {% if hasInactiveAccounts %}
-    <div class="bg-white border border-gray-200 shadow-sm mb-8 opacity-60">
-        <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
-            <h3 class="text-lg font-medium text-gray-500">Comptes inactifs</h3>
-        </div>
-        <div class="divide-y divide-gray-100">
-            {% for account in accounts %}
-                {% if account.is_active == 0 %}
-                    <a href="/accounts/{{ account.id }}" class="flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition-colors block">
-                        <div>
-                            <div class="font-medium text-gray-900">{{ account.bank_name }} - {{ account.name }} <span class="text-xs text-gray-400">(Inactif)</span></div>
-                            {% if account.number %}
-                            <div class="text-sm text-gray-500">{{ account.number }}</div>
-                            {% endif %}
-                        </div>
-                        <div class="text-right">
-                            <div class="text-xl font-bold text-gray-500">{{ account.current_balance|number_format(2, ',', ' ') }} €</div>
-                        </div>
-                    </a>
-                {% endif %}
-            {% endfor %}
-        </div>
-    </div>
-    {% endif %}
 
     <!-- Chart.js with Zoom Plugin -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -134,7 +65,7 @@
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: true,
+                maintainAspectRatio: false,
                 plugins: {
                     legend: {
                         display: false
@@ -178,7 +109,10 @@
                         beginAtZero: false,
                         ticks: {
                             callback: function(value) {
-                                return value.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' €';
+                                if (Math.abs(value) >= 1000) {
+                                    return (value / 1000).toFixed(0) + 'K€';
+                                }
+                                return value + '€';
                             }
                         },
                         grid: {
@@ -194,55 +128,17 @@
             }
         });
         
-        // Function to toggle account overlay
-        function toggleAccountOverlay(accountId) {
-            if (!accountId) {
-                // Show global balance (default)
-                balanceChart.data.datasets[0].label = 'Solde global (€)';
-                balanceChart.data.datasets[0].data = {{ monthlyData.balances|json_encode|raw }};
-                balanceChart.data.datasets[0].borderColor = '#0B508C';
-                balanceChart.data.datasets[0].backgroundColor = 'rgba(11, 80, 140, 0.1)';
-                balanceChart.data.datasets[0].pointBackgroundColor = '#0B508C';
-                
-                // Remove second dataset if exists
-                if (balanceChart.data.datasets.length > 1) {
-                    balanceChart.data.datasets.pop();
-                }
-                
-                balanceChart.options.plugins.legend.display = false;
-                balanceChart.update();
-                return;
-            }
+        // Zoom initial adapté à la taille de l'écran
+        setTimeout(() => {
+            const totalPoints = balanceChart.data.labels.length;
+            const isMobile = window.innerWidth < 768;
+            const daysToDisplay = isMobile ? 10 : 30; // 10 jours sur mobile, 30 sur desktop
             
-            // Fetch account balance data
-            fetch(`/api/account-balance?account_id=${accountId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        console.error(data.error);
-                        return;
-                    }
-                    
-                    // Replace the main dataset with account data
-                    balanceChart.data.datasets[0].label = data.accountName;
-                    balanceChart.data.datasets[0].data = data.balances;
-                    balanceChart.data.datasets[0].borderColor = '#44C1F2';
-                    balanceChart.data.datasets[0].backgroundColor = 'rgba(68, 193, 242, 0.1)';
-                    balanceChart.data.datasets[0].pointBackgroundColor = '#44C1F2';
-                    
-                    // Remove second dataset if exists
-                    if (balanceChart.data.datasets.length > 1) {
-                        balanceChart.data.datasets.pop();
-                    }
-                    
-                    // Show legend with account name
-                    balanceChart.options.plugins.legend.display = true;
-                    
-                    balanceChart.update();
-                })
-                .catch(error => {
-                    console.error('Error fetching account data:', error);
-                });
-        }
+            if (totalPoints > daysToDisplay) {
+                const startIndex = totalPoints - daysToDisplay;
+                balanceChart.zoomScale('x', {min: startIndex, max: totalPoints - 1}, 'default');
+            }
+        }, 200);
     </script>
 {% endblock %}
+

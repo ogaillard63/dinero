@@ -3,6 +3,30 @@
 namespace App\Controllers;
 
 class AccountController extends BaseController {
+    public function index() {
+        // Get all accounts with bank names
+        $stmt = $this->db->query("
+            SELECT a.*, b.name as bank_name 
+            FROM accounts a 
+            JOIN banks b ON a.bank_id = b.id
+            ORDER BY a.is_active DESC, b.name ASC, a.sort_order ASC
+        ");
+        $accounts = $stmt->fetchAll();
+        
+        // Calculate current balance for each account
+        foreach ($accounts as &$account) {
+            $stmt = $this->db->prepare("SELECT SUM(amount) as total FROM transactions WHERE account_id = :id");
+            $stmt->execute(['id' => $account['id']]);
+            $result = $stmt->fetch();
+            $transactions_total = $result['total'] ?? 0;
+            $account['current_balance'] = $account['initial_balance'] + $transactions_total;
+        }
+
+        $this->render('accounts_list.twig', [
+            'accounts' => $accounts
+        ]);
+    }
+
     public function show($id) {
         // Get account details
         $stmt = $this->db->prepare("

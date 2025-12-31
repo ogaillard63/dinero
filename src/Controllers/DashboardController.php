@@ -4,29 +4,27 @@ namespace App\Controllers;
 
 class DashboardController extends BaseController {
     public function index() {
-        // Get all accounts
-        $stmt = $this->db->query("
-            SELECT a.*, b.name as bank_name 
-            FROM accounts a 
-            JOIN banks b ON a.bank_id = b.id
-        ");
+        // Get all accounts to calculate total balance
+        $stmt = $this->db->query("SELECT id, initial_balance FROM accounts");
         $accounts = $stmt->fetchAll();
         
-        // Calculate current balance for each account and total
         $totalBalance = 0;
-        foreach ($accounts as &$account) {
+        foreach ($accounts as $account) {
             $stmt = $this->db->prepare("SELECT SUM(amount) as total FROM transactions WHERE account_id = :id");
             $stmt->execute(['id' => $account['id']]);
             $result = $stmt->fetch();
             $transactions_total = $result['total'] ?? 0;
-            $account['current_balance'] = $account['initial_balance'] + $transactions_total;
-            $totalBalance += $account['current_balance'];
+            $totalBalance += ($account['initial_balance'] + $transactions_total);
         }
-        
-        // Get last transaction date
-        $stmt = $this->db->query("SELECT MAX(date) as last_date FROM transactions");
-        $result = $stmt->fetch();
-        $lastTransactionDate = $result['last_date'] ?? null;
+
+        // Get all accounts with bank names for the chart selector
+        $stmt = $this->db->query("
+            SELECT a.id, a.name, b.name as bank_name 
+            FROM accounts a 
+            JOIN banks b ON a.bank_id = b.id
+            ORDER BY b.name, a.name
+        ");
+        $chartAccounts = $stmt->fetchAll();
         
         // Get monthly balance evolution (last 12 months)
         $monthlyData = $this->getMonthlyBalanceEvolution();
@@ -39,13 +37,13 @@ class DashboardController extends BaseController {
         
         $this->render('dashboard.twig', [
             'totalBalance' => $totalBalance,
-            'accounts' => $accounts,
-            'lastTransactionDate' => $lastTransactionDate,
+            'accounts' => $chartAccounts, // Used for the chart selector
             'monthlyData' => $monthlyData,
             'balanceVariation' => $balanceVariation,
             'balanceVariationPercent' => $balanceVariationPercent
         ]);
     }
+
     
     public function getAccountBalanceData() {
         header('Content-Type: application/json');

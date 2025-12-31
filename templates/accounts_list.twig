@@ -1,0 +1,89 @@
+{% extends "layout.twig" %}
+
+{% block title %}Liste des Comptes{% endblock %}
+
+{% block content %}
+    <div class="flex justify-between items-center mb-8">
+        <h2 class="text-3xl font-light text-primary">Mes Comptes</h2>
+        <a href="/accounts/create" class="btn btn-primary">Nouveau compte</a>
+
+    </div>
+
+    <!-- Active Accounts Table -->
+    <div class="bg-white border border-gray-200 shadow-sm mb-8 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+            <h3 class="text-lg font-medium text-primary uppercase tracking-wider">Comptes actifs</h3>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr>
+                        <th class="px-2 md:px-6 py-2 bg-gray-50/50 text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100">Banque</th>
+                        <th class="px-2 md:px-6 py-2 bg-gray-50/50 text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100">Compte</th>
+                        <th class="px-2 md:px-6 py-2 bg-gray-50/50 text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100 text-right">Solde actuel</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    {% set hasActiveAccounts = false %}
+                    {% for account in accounts %}
+                        {% if account.is_active == 1 %}
+                            {% set hasActiveAccounts = true %}
+                            <tr class="hover:bg-gray-50 transition-colors duration-150 cursor-pointer group" onclick="window.location='/operations?account_id={{ account.id }}'">
+                                <td class="px-2 md:px-6 py-4 whitespace-nowrap text-sm text-gray-500 uppercase tracking-tighter">{{ account.bank_name }}</td>
+                                <td class="px-2 md:px-6 py-4">
+                                    <div class="text-sm font-medium text-gray-700 group-hover:text-primary transition-colors uppercase">{{ account.name }}</div>
+                                    {% if account.number %}
+                                    <div class="text-[10px] text-gray-400 font-mono">{{ account.number }}</div>
+                                    {% endif %}
+                                </td>
+                                <td class="px-2 md:px-6 py-4 whitespace-nowrap text-right">
+                                    <span class="text-sm font-bold text-primary">{{ account.current_balance|number_format(2, ',', ' ') }} €</span>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if not hasActiveAccounts %}
+                    <tr>
+                        <td colspan="3" class="px-6 py-12 text-center text-sm text-gray-500 italic">Aucun compte actif configuré</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Inactive Accounts Table (Compact) -->
+    {% set hasInactiveAccounts = false %}
+    {% for account in accounts %}
+        {% if account.is_active == 0 %}
+            {% set hasInactiveAccounts = true %}
+        {% endif %}
+    {% endfor %}
+    
+    {% if hasInactiveAccounts %}
+    <div class="bg-white border border-gray-200 shadow-sm opacity-60 overflow-hidden">
+        <div class="px-6 py-3 border-b border-gray-100 bg-gray-50">
+            <h3 class="text-xs font-medium text-gray-500 uppercase tracking-widest">Comptes inactifs</h3>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <tbody class="divide-y divide-gray-100">
+                    {% for account in accounts %}
+                        {% if account.is_active == 0 %}
+                            <tr class="hover:bg-gray-50 transition-colors duration-150 cursor-pointer" onclick="window.location='/operations?account_id={{ account.id }}'">
+                                <td class="px-6 py-3 whitespace-nowrap text-xs text-gray-400 w-1/4">{{ account.bank_name }}</td>
+                                <td class="px-6 py-3 text-xs font-medium text-gray-600 uppercase">{{ account.name }}</td>
+                                <td class="px-6 py-3 whitespace-nowrap text-right text-sm font-bold text-gray-400">
+                                    {{ account.current_balance|number_format(2, ',', ' ') }} €
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+{% endblock %}
+

@@ -59,13 +59,15 @@
         <!-- Sidebar -->
         <aside id="sidebar" class="fixed inset-y-0 left-0 z-30 w-64 bg-white border-r border-gray-200 transform -translate-x-full md:relative md:translate-x-0 transition-transform duration-300 ease-in-out">
             <div class="p-6 border-b border-gray-200 flex justify-between items-center">
-                <h1 class="text-2xl font-light tracking-wider text-primary flex items-center">
-                    <svg class="w-8 h-8 mr-3" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/>
-                        <path d="M12 6v12M9 9h4.5a1.5 1.5 0 0 1 0 3H9m0 0h5.5a1.5 1.5 0 0 1 0 3H9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                    </svg>
-                    DINERO
-                </h1>
+                <a href="/dashboard" class="flex items-center group">
+                    <h1 class="text-2xl font-light tracking-wider text-primary flex items-center group-hover:opacity-80 transition-opacity">
+                        <svg class="w-8 h-8 mr-3" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/>
+                            <path d="M12 6v12M9 9h4.5a1.5 1.5 0 0 1 0 3H9m0 0h5.5a1.5 1.5 0 0 1 0 3H9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                        DINERO
+                    </h1>
+                </a>
                 <!-- Close button for mobile -->
                 <button onclick="toggleSidebar()" class="md:hidden text-gray-500 hover:text-primary focus:outline-none">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -85,11 +87,11 @@
                         </a>
                     </li>
                     <li>
-                        <a href="/operations" class="flex items-center px-4 py-3 text-gray-600 hover:bg-blue-50 hover:text-primary transition-colors">
+                        <a href="/accounts" class="flex items-center px-4 py-3 text-gray-600 hover:bg-blue-50 hover:text-primary transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="square" stroke-linejoin="miter" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                                <path stroke-linecap="square" stroke-linejoin="miter" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                             </svg>
-                            Opérations
+                            Comptes
                         </a>
                     </li>
                     <li>
@@ -97,9 +99,11 @@
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="square" stroke-linejoin="miter" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                             </svg>
-                            Banques & Comptes
+                            Banques
                         </a>
                     </li>
+
+
                     <li>
                         <a href="/maintenance" class="flex items-center px-4 py-3 text-gray-600 hover:bg-blue-50 hover:text-primary transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -128,23 +132,6 @@
                 </ul>
             </nav>
 
-            <!-- PWA Sync Section -->
-            <div class="border-t border-gray-200 p-4 space-y-3">
-                <!-- Sync Button -->
-                <button id="syncButton" onclick="window.syncManager?.syncNow()" class="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium text-white transition-all bg-green-600 hover:bg-green-700">
-                    <svg id="syncIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                    </svg>
-                    <span>Synchroniser</span>
-                </button>
-                
-                <!-- Network & Sync Status -->
-                <div class="text-xs text-center space-y-1">
-                    <div id="networkStatus" class="text-green-600 font-medium">En ligne</div>
-                    <div id="syncStatus" class="text-gray-500">Jamais synchronisé</div>
-                </div>
-            </div>
-            
             <div class="border-t border-gray-200 p-4">
                 <a href="/logout" class="flex items-center px-4 py-2 text-sm text-gray-600 hover:text-red-600 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">

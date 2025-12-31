@@ -5,74 +5,94 @@
 {% block content %}
     <div class="flex justify-between items-center mb-8">
         <h2 class="text-3xl font-light text-primary">Mes Banques</h2>
-        <a href="/banks/create" class="bg-success text-white px-6 py-2 uppercase text-sm tracking-wider hover:bg-green-600 transition-colors">Ajouter une banque</a>
+        <a href="/banks/create" class="btn btn-primary">Ajouter une banque</a>
     </div>
 
     <div class="space-y-8">
         {% for bank in banks %}
-        <div class="bg-white border border-gray-200 shadow-sm">
+        <div class="bg-white border border-gray-200 shadow-sm overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
                 <div>
-                    <h3 class="text-xl font-medium text-primary">{{ bank.name }}</h3>
-                    <span class="text-sm text-gray-500">{{ bank.accounts|length }} comptes</span>
+                    <h3 class="text-lg font-medium text-primary uppercase tracking-wider">{{ bank.name }}</h3>
                 </div>
-                <div class="flex space-x-1">
-                    <a href="/accounts/create?bank_id={{ bank.id }}" class="btn-icon btn-icon-primary rounded" title="Ajouter un compte">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div class="flex space-x-2">
+                    <a href="/accounts/create?bank_id={{ bank.id }}" class="btn btn-outline-primary btn-sm btn-icon-sm" title="Ajouter un compte à cette banque">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                         </svg>
                     </a>
-                    <a href="/banks/{{ bank.id }}/edit" class="btn-icon btn-icon-primary rounded" title="Modifier la banque">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+
+
+
+                    <a href="/banks/{{ bank.id }}/edit" class="btn btn-outline-primary btn-sm btn-icon-sm" title="Modifier la banque">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                         </svg>
                     </a>
-                    <form action="/banks/{{ bank.id }}/delete" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette banque et tous ses comptes ?');" class="inline">
-                        <button type="submit" class="btn-icon btn-icon-danger rounded" title="Supprimer la banque">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <form action="/banks/{{ bank.id }}/delete" method="POST" onsubmit="return confirm('Êtes-vous sûr ?');" class="inline">
+                        <button type="submit" class="btn btn-outline-danger btn-sm btn-icon-sm" title="Supprimer la banque">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                             </svg>
                         </button>
                     </form>
                 </div>
+
             </div>
             
-            <div class="divide-y divide-gray-100 sortable-accounts" data-bank-id="{{ bank.id }}">
-                {% for account in bank.accounts %}
-                <div class="px-6 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors group account-item {{ account.is_active == 0 ? 'opacity-50' : '' }}" data-account-id="{{ account.id }}">
-                    <div class="drag-handle cursor-move mr-3 text-gray-400 hover:text-gray-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="square" stroke-linejoin="miter" stroke-width="2" d="M4 8h16M4 16h16" />
-                        </svg>
-                    </div>
-                    <div class="flex-1 flex items-center justify-between">
-                        <div class="flex-1">
-                            <a href="/accounts/{{ account.id }}" class="text-gray-900 hover:text-primary font-medium">
-                                {{ account.name }}
-                            </a>
-                            {% if account.number %}
-                            <span class="text-sm text-gray-500 ml-2">{{ account.number }}</span>
-                            {% endif %}
-                        </div>
-                        <div class="flex items-center space-x-6">
-                            <span class="text-sm text-gray-500">{{ account.transaction_count }} op.</span>
-                            <span class="text-lg font-bold text-primary min-w-[120px] text-right">
-                                {{ account.current_balance|number_format(2, ',', ' ') }} €
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                {% else %}
-                <div class="px-6 py-4 text-center text-sm text-gray-500">Aucun compte pour cette banque.</div>
-                {% endfor %}
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr>
+                            <th class="px-2 md:px-6 py-2 bg-gray-50/50 text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100 w-8"></th>
+                            <th class="px-2 md:px-6 py-2 bg-gray-50/50 text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100">Compte</th>
+                            <th class="px-2 md:px-6 py-2 bg-gray-50/50 text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100 text-right">Op.</th>
+                            <th class="px-2 md:px-6 py-2 bg-gray-50/50 text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100 text-right">Solde</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100 sortable-accounts" data-bank-id="{{ bank.id }}">
+                        {% for account in bank.accounts %}
+                        <tr class="group account-item {{ account.is_active == 0 ? 'opacity-50' : '' }}" data-account-id="{{ account.id }}">
+                            <td class="px-2 md:px-6 py-4 border-b border-gray-50">
+                                <div class="drag-handle cursor-move text-gray-300 hover:text-gray-500 transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="square" stroke-linejoin="miter" stroke-width="2" d="M4 8h16M4 16h16" />
+                                    </svg>
+                                </div>
+                            </td>
+                            <td class="px-2 md:px-6 py-4 border-b border-gray-50">
+                                <a href="/operations?account_id={{ account.id }}" class="text-sm font-medium text-gray-700 hover:text-primary transition-colors uppercase">
+                                    {{ account.name }}
+                                </a>
+                                {% if account.number %}
+                                <div class="text-[10px] text-gray-400 font-mono">{{ account.number }}</div>
+                                {% endif %}
+                            </td>
+                            <td class="px-2 md:px-6 py-4 border-b border-gray-50 text-right text-xs text-gray-400 font-mono">
+                                {{ account.transaction_count }}
+                            </td>
+                            <td class="px-2 md:px-6 py-4 border-b border-gray-50 text-right">
+                                <span class="text-sm font-bold text-primary">
+                                    {{ account.current_balance|number_format(2, ',', ' ') }} €
+                                </span>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="4" class="px-6 py-10 text-center text-xs text-gray-400 italic">Aucun compte pour cette banque.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
         {% else %}
-        <div class="text-center py-12 bg-white border border-gray-200">
-            <p class="text-gray-500">Aucune banque configurée.</p>
+        <div class="text-center py-20 bg-white border border-gray-200">
+            <p class="text-xs text-gray-400 uppercase tracking-widest">Aucune banque configurée.</p>
         </div>
         {% endfor %}
     </div>
+
 
     <!-- SortableJS CDN -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>

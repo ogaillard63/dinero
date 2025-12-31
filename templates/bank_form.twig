@@ -4,8 +4,7 @@
 
 {% block content %}
     <div class="mb-8">
-        <a href="/banks" class="text-sm text-gray-500 hover:text-black mb-4 inline-block">&larr; Retour aux banques</a>
-        <h2 class="text-3xl font-light text-gray-800">{{ bank ? 'Modifier' : 'Ajouter' }} une banque</h2>
+        <h2 class="text-3xl font-light text-primary">{{ bank ? 'Modifier' : 'Ajouter' }} une banque</h2>
     </div>
 
     {% if error %}
@@ -14,10 +13,10 @@
     </div>
     {% endif %}
 
-    <div class="bg-white p-8 border border-gray-200 shadow-sm max-w-2xl">
+    <div class="bg-white p-8 border border-gray-200 shadow-sm w-full">
         <form action="{{ bank ? '/banks/' ~ bank.id ~ '/edit' : '/banks/create' }}" method="POST">
-            <div class="mb-6">
-                <label class="block text-gray-700 text-sm font-bold mb-2 uppercase" for="name">
+            <div class="mb-8">
+                <label class="block text-gray-700 text-[10px] font-bold mb-2 uppercase tracking-widest" for="name">
                     Nom de la banque
                 </label>
                 <input 
@@ -32,10 +31,10 @@
             </div>
 
             <div class="flex justify-end space-x-4">
-                <a href="/banks" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-8 focus:outline-none uppercase tracking-wider transition-colors duration-200">
+                <a href="/banks" class="btn btn-outline">
                     Annuler
                 </a>
-                <button class="bg-black hover:bg-gray-800 text-white font-bold py-3 px-8 focus:outline-none uppercase tracking-wider transition-colors duration-200" type="submit">
+                <button class="btn btn-primary px-10" type="submit">
                     {{ bank ? 'Modifier' : 'Ajouter' }}
                 </button>
             </div>

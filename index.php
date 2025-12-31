@@ -73,6 +73,7 @@ $router->post('/banks/(\d+)/delete', 'App\Controllers\BankController@delete');
 $router->get('/banks/(\d+)', 'App\Controllers\BankController@show');
 
 // Accounts CRUD
+$router->get('/accounts', 'App\Controllers\AccountController@index');
 $router->get('/accounts/create', 'App\Controllers\AccountController@create');
 $router->post('/accounts/create', 'App\Controllers\AccountController@store');
 $router->get('/accounts/(\d+)', 'App\Controllers\AccountController@show');

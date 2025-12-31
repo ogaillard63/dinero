@@ -13,7 +13,7 @@
                 <div class="px-6 py-3 border-b border-gray-100 bg-gray-50">
                     <div class="mb-3">
                         <div class="flex justify-between items-end mb-2">
-                            <label for="searchInput" class="text-sm font-medium text-gray-700">Recherche (min. 3 caractères, appuyez sur Entrée)</label>
+                            <label for="searchInput" class="text-sm font-medium text-gray-700">Recherche</label>
                             <span id="operationsCount" class="text-xs text-gray-500"></span>
                         </div>
                         <div class="relative">
@@ -53,32 +53,35 @@
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr>
-                                <th class="px-6 py-3 bg-gray-50 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-100">Date</th>
-                                <th class="px-6 py-3 bg-gray-50 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-100">Description</th>
-
-                                <th class="px-6 py-3 bg-gray-50 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-100 text-right">Montant</th>
-                                <th class="px-6 py-3 bg-gray-50 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-100 text-right">Actions</th>
+                                <th class="px-2 md:px-6 py-3 bg-gray-50 text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100 text-center">Date</th>
+                                <th class="px-2 md:px-6 py-3 bg-gray-50 text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100">Description</th>
+                                <th class="px-2 md:px-6 py-3 bg-gray-50 text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100 text-right">Montant</th>
+                                <th class="px-2 md:px-6 py-3 bg-gray-50 text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100 text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100" id="transactionsTableBody">
+
                             {% for transaction in transactions %}
                             <tr class="hover:bg-gray-50 transition-colors duration-150">
-                                <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-500">{{ transaction.date|date("d/m/Y") }}</td>
-                                <td class="px-6 py-3 text-sm text-gray-900">{{ transaction.description }}</td>
+                                <td class="px-2 md:px-6 py-3 whitespace-nowrap text-sm text-gray-500 font-mono italic leading-tight text-center">
+                                    <div>{{ transaction.date|date("d/m") }}</div>
+                                    <div class="text-[10px] opacity-75">{{ transaction.date|date("Y") }}</div>
+                                </td>
+                                <td class="px-2 md:px-6 py-3 text-sm text-gray-900 uppercase tracking-tight">{{ transaction.description }}</td>
 
-                                <td class="px-6 py-3 whitespace-nowrap text-sm text-right font-medium {{ transaction.amount < 0 ? 'text-red-600' : 'text-success' }}">
+                                <td class="px-2 md:px-6 py-3 whitespace-nowrap text-sm text-right font-bold {{ transaction.amount < 0 ? 'text-red-600' : 'text-success' }}">
                                     {{ transaction.amount|number_format(2, ',', ' ') }} €
                                 </td>
-                                <td class="px-6 py-3 whitespace-nowrap text-right">
-                                    <div class="flex justify-end space-x-2">
-                                        <a href="/transactions/{{ transaction.id }}/edit" class="btn-icon btn-icon-primary rounded" title="Modifier">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <td class="px-2 md:px-6 py-3 whitespace-nowrap text-right">
+                                    <div class="flex justify-end space-x-1 md:space-x-2">
+                                        <a href="/transactions/{{ transaction.id }}/edit" class="btn btn-outline-primary btn-sm btn-icon-sm !w-8 !h-8" title="Modifier">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                             </svg>
                                         </a>
-                                        <form action="/transactions/{{ transaction.id }}/delete" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette transaction ?');" class="inline">
-                                            <button type="submit" class="btn-icon btn-icon-danger rounded" title="Supprimer">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <form action="/transactions/{{ transaction.id }}/delete" method="POST" onsubmit="return confirm('Êtes-vous sûr ?');" class="inline">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm btn-icon-sm !w-8 !h-8" title="Supprimer">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                 </svg>
                                             </button>
@@ -87,6 +90,7 @@
                                 </td>
                             </tr>
                             {% else %}
+
                             <tr id="noTransactionsRow">
                                 <td colspan="4" class="px-6 py-8 text-center text-sm text-gray-500">
                                     {% if selected_account %}
@@ -102,17 +106,17 @@
                 </div>
                 
                 <!-- Load More Button -->
-                {% if transactions|length >= 50 %}
                 <div class="p-4 text-center border-t border-gray-100" id="loadMoreContainer">
-                    <button id="loadMoreBtn" onclick="loadMoreTransactions()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 px-6 rounded text-sm uppercase tracking-wider transition-colors">
-                        Charger plus d'opérations
+                    <button id="loadMoreBtn" onclick="loadMoreTransactions()" class="btn btn-outline w-full max-w-xs">
+                        Charger plus
                     </button>
+
                     <div id="loadingIndicator" class="hidden text-gray-500">
                         Chargement...
                     </div>
                 </div>
-                {% endif %}
             </div>
+
         </div>
 
         <!-- Sidebar: Account selector and Add button (1/3) -->
@@ -142,7 +146,7 @@
                         <div class="text-xs text-gray-400 mt-1">{{ selected_account.number }}</div>
                     </div>
 
-                    <button onclick="openAddTransactionModal()" class="block w-full bg-success text-white text-center py-3 px-6 uppercase text-sm tracking-wider hover:bg-green-600 transition-colors">
+                    <button onclick="openAddTransactionModal()" class="btn btn-success w-full">
                         + Ajouter une opération
                     </button>
                     {% endif %}
@@ -172,7 +176,7 @@
                     <input type="hidden" name="account_id" id="modal_account_id" value="{{ selected_account ? selected_account.id : '' }}">
                     
                     <div class="mb-6">
-                        <label class="block text-gray-700 text-sm font-bold mb-2 uppercase" for="modal_date">Date</label>
+                        <label class="block text-gray-700 text-sm font-bold mb-2 uppercase tracking-widest text-[10px]" for="modal_date">Date</label>
                         <input 
                             class="shadow-none appearance-none border border-gray-300 w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:border-gray-500" 
                             id="modal_date" 
@@ -184,7 +188,7 @@
                     </div>
 
                     <div class="mb-6">
-                        <label class="block text-gray-700 text-sm font-bold mb-2 uppercase" for="modal_description">Description</label>
+                        <label class="block text-gray-700 text-sm font-bold mb-2 uppercase tracking-widest text-[10px]" for="modal_description">Description</label>
                         <input 
                             class="shadow-none appearance-none border border-gray-300 w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:border-gray-500" 
                             id="modal_description" 
@@ -195,9 +199,9 @@
                         >
                     </div>
 
-                    <div class="grid grid-cols-2 gap-6 mb-6">
+                    <div class="grid grid-cols-2 gap-6 mb-8">
                         <div>
-                            <label class="block text-gray-700 text-sm font-bold mb-2 uppercase" for="modal_type">Type</label>
+                            <label class="block text-gray-700 text-sm font-bold mb-2 uppercase tracking-widest text-[10px]" for="modal_type">Type</label>
                             <select 
                                 class="shadow-none appearance-none border border-gray-300 w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:border-gray-500" 
                                 id="modal_type" 
@@ -210,7 +214,7 @@
                         </div>
 
                         <div>
-                            <label class="block text-gray-700 text-sm font-bold mb-2 uppercase" for="modal_amount">Montant</label>
+                            <label class="block text-gray-700 text-sm font-bold mb-2 uppercase tracking-widest text-[10px]" for="modal_amount">Montant</label>
                             <input 
                                 class="shadow-none appearance-none border border-gray-300 w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:border-gray-500" 
                                 id="modal_amount" 
@@ -224,10 +228,10 @@
                     </div>
 
                     <div class="flex justify-end space-x-4">
-                        <button type="button" onclick="closeAddTransactionModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-8 focus:outline-none uppercase tracking-wider transition-colors duration-200">
+                        <button type="button" onclick="closeAddTransactionModal()" class="btn btn-outline">
                             Annuler
                         </button>
-                        <button type="submit" class="bg-success hover:bg-green-600 text-white font-bold py-3 px-8 focus:outline-none uppercase tracking-wider transition-colors duration-200">
+                        <button type="submit" class="btn btn-success px-10">
                             Ajouter
                         </button>
                     </div>
@@ -235,6 +239,7 @@
             </div>
         </div>
     </div>
+
 
     <script>
         // Lazy loading variables
@@ -274,29 +279,35 @@
                     
                     if (data.transactions && data.transactions.length > 0) {
                         data.transactions.forEach(transaction => {
-                            const date = new Date(transaction.date).toLocaleDateString('fr-FR');
+                            const dateObj = new Date(transaction.date);
+                            const dayMonth = dateObj.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
+                            const year = dateObj.getFullYear();
+
                             const amount = parseFloat(transaction.amount).toFixed(2).replace('.', ',') + ' €';
                             const amountColor = transaction.amount < 0 ? 'text-red-600' : 'text-success';
                             
                             const tr = document.createElement('tr');
                             tr.className = 'hover:bg-gray-50 transition-colors duration-150';
                             tr.innerHTML = `
-                                <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-500">${date}</td>
-                                <td class="px-6 py-3 text-sm text-gray-900">${transaction.description}</td>
+                                <td class="px-2 md:px-6 py-3 whitespace-nowrap text-sm text-gray-500 font-mono italic leading-tight text-center">
+                                    <div>${dayMonth}</div>
+                                    <div class="text-[10px] opacity-75">${year}</div>
+                                </td>
+                                <td class="px-2 md:px-6 py-3 text-sm text-gray-900 uppercase tracking-tight">${transaction.description}</td>
 
-                                <td class="px-6 py-3 whitespace-nowrap text-sm text-right font-medium ${amountColor}">
+                                <td class="px-2 md:px-6 py-3 whitespace-nowrap text-sm text-right font-bold ${amountColor}">
                                     ${amount}
                                 </td>
-                                <td class="px-6 py-3 whitespace-nowrap text-right">
-                                    <div class="flex justify-end space-x-2">
-                                        <a href="/transactions/${transaction.id}/edit" class="btn-icon btn-icon-primary rounded" title="Modifier">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <td class="px-2 md:px-6 py-3 whitespace-nowrap text-right">
+                                    <div class="flex justify-end space-x-1 md:space-x-2">
+                                        <a href="/transactions/${transaction.id}/edit" class="btn btn-outline-primary btn-sm btn-icon-sm !w-8 !h-8" title="Modifier">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                             </svg>
                                         </a>
-                                        <form action="/transactions/${transaction.id}/delete" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette transaction ?');" class="inline">
-                                            <button type="submit" class="btn-icon btn-icon-danger rounded" title="Supprimer">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <form action="/transactions/${transaction.id}/delete" method="POST" onsubmit="return confirm('Êtes-vous sûr ?');" class="inline">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm btn-icon-sm !w-8 !h-8" title="Supprimer">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                 </svg>
                                             </button>
@@ -304,6 +315,7 @@
                                     </div>
                                 </td>
                             `;
+
                             tbody.appendChild(tr);
                         });
                         
@@ -457,22 +469,22 @@
                             const tr = document.createElement('tr');
                             tr.className = 'hover:bg-gray-50 transition-colors duration-150';
                             tr.innerHTML = `
-                                <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-500">${date}</td>
-                                <td class="px-6 py-3 text-sm text-gray-900">${description}</td>
+                                <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-500 font-mono italic">${date}</td>
+                                <td class="px-6 py-3 text-sm text-gray-900 uppercase tracking-tight">${description}</td>
 
-                                <td class="px-6 py-3 whitespace-nowrap text-sm text-right font-medium ${amountColor}">
+                                <td class="px-6 py-3 whitespace-nowrap text-sm text-right font-bold ${amountColor}">
                                     ${amount}
                                 </td>
                                 <td class="px-6 py-3 whitespace-nowrap text-right">
                                     <div class="flex justify-end space-x-2">
-                                        <a href="/transactions/${transaction.id}/edit" class="btn-icon btn-icon-primary rounded" title="Modifier">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <a href="/transactions/${transaction.id}/edit" class="text-gray-400 hover:text-primary transition-colors">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                             </svg>
                                         </a>
-                                        <form action="/transactions/${transaction.id}/delete" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette transaction ?');" class="inline">
-                                            <button type="submit" class="btn-icon btn-icon-danger rounded" title="Supprimer">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <form action="/transactions/${transaction.id}/delete" method="POST" onsubmit="return confirm('Êtes-vous sûr ?');" class="inline">
+                                            <button type="submit" class="text-gray-400 hover:text-red-500 transition-colors">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                 </svg>
                                             </button>
@@ -480,6 +492,7 @@
                                     </div>
                                 </td>
                             `;
+
                             tbody.appendChild(tr);
                         });
                     } else {

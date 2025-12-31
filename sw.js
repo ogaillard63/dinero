@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dinero-v1.0.1';
+const CACHE_NAME = 'dinero-v1.0.2';
 const ASSETS_TO_CACHE = [
     'manifest.json',
     'offline.html',

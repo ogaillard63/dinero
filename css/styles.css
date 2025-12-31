@@ -59,6 +59,90 @@
     border-radius: 0 !important;
 }
 
+/* Base Button Style */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.6rem 1.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    border: 1px solid transparent;
+    text-align: center;
+}
+
+/* Size Variants */
+.btn-sm {
+    padding: 0.4rem 1rem;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+}
+
+.btn-icon-sm {
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+}
+
+/* Styling Variants */
+.btn-primary {
+    background-color: #0B508C;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #083d6b;
+}
+
+.btn-success {
+    background-color: #2DA661;
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: #248a50;
+}
+
+.btn-outline {
+    background-color: transparent;
+    border-color: #e5e7eb;
+    color: #6b7280;
+}
+
+.btn-outline:hover {
+    border-color: #9ca3af;
+    color: #374151;
+    background-color: #f9fafb;
+}
+
+.btn-outline-primary {
+    background-color: transparent;
+    border-color: rgba(11, 80, 140, 0.2);
+    color: #0B508C;
+}
+
+.btn-outline-primary:hover {
+    border-color: #0B508C;
+    background-color: rgba(11, 80, 140, 0.05);
+}
+
+.btn-outline-danger {
+    background-color: transparent;
+    border-color: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+}
+
+.btn-outline-danger:hover {
+    border-color: #ef4444;
+    background-color: rgba(239, 68, 68, 0.05);
+}
+
+
+
 /* Responsive Font Size */
 @media (max-width: 640px) {
     html {

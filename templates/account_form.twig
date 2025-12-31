@@ -4,8 +4,7 @@
 
 {% block content %}
     <div class="mb-8">
-        <a href="/banks" class="text-sm text-gray-500 hover:text-black mb-4 inline-block">&larr; Retour aux banques</a>
-        <h2 class="text-3xl font-light text-gray-800">{{ account ? 'Modifier' : 'Ajouter' }} un compte</h2>
+        <h2 class="text-3xl font-light text-primary">{{ account ? 'Modifier' : 'Ajouter' }} un compte</h2>
     </div>
 
     {% if error %}
@@ -14,14 +13,14 @@
     </div>
     {% endif %}
 
-    <div class="bg-white p-8 border border-gray-200 shadow-sm max-w-2xl">
+    <div class="bg-white p-8 border border-gray-200 shadow-sm w-full">
         <form action="{{ account ? '/accounts/' ~ account.id ~ '/edit' : '/accounts/create' }}" method="POST">
             <div class="mb-6">
-                <label class="block text-gray-700 text-sm font-bold mb-2 uppercase" for="bank_id">
+                <label class="block text-gray-700 text-[10px] font-bold mb-2 uppercase tracking-widest" for="bank_id">
                     Banque
                 </label>
                 <select 
-                    class="shadow-none appearance-none border border-gray-300 w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:border-gray-500" 
+                    class="shadow-none appearance-none border border-gray-300 w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:border-gray-500 mb-6" 
                     id="bank_id" 
                     name="bank_id"
                     required
@@ -31,14 +30,12 @@
                     <option value="{{ bank.id }}" {{ (account and account.bank_id == bank.id) or (preselected_bank_id and preselected_bank_id == bank.id) ? 'selected' : '' }}>{{ bank.name }}</option>
                     {% endfor %}
                 </select>
-            </div>
 
-            <div class="mb-6">
-                <label class="block text-gray-700 text-sm font-bold mb-2 uppercase" for="name">
+                <label class="block text-gray-700 text-[10px] font-bold mb-2 uppercase tracking-widest" for="name">
                     Nom du compte
                 </label>
                 <input 
-                    class="shadow-none appearance-none border border-gray-300 w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:border-gray-500" 
+                    class="shadow-none appearance-none border border-gray-300 w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:border-gray-500 mb-6" 
                     id="name" 
                     name="name" 
                     type="text" 
@@ -46,74 +43,70 @@
                     value="{{ account ? account.name : '' }}"
                     required
                 >
-            </div>
 
-            <div class="mb-6">
-                <label class="block text-gray-700 text-sm font-bold mb-2 uppercase" for="number">
+                <label class="block text-gray-700 text-[10px] font-bold mb-2 uppercase tracking-widest" for="number">
                     Numéro de compte
                 </label>
                 <input 
-                    class="shadow-none appearance-none border border-gray-300 w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:border-gray-500" 
+                    class="shadow-none appearance-none border border-gray-300 w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:border-gray-500 mb-6" 
                     id="number" 
                     name="number" 
                     type="text" 
                     placeholder="Ex: FR76 1234 5678 9012 3456 7890 123"
                     value="{{ account ? account.number : '' }}"
                 >
-            </div>
 
-            <div class="grid grid-cols-2 gap-6 mb-6">
-                <div>
-                    <label class="block text-gray-700 text-sm font-bold mb-2 uppercase" for="initial_balance">
-                        Solde initial
-                    </label>
-                    <input 
-                        class="shadow-none appearance-none border border-gray-300 w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:border-gray-500" 
-                        id="initial_balance" 
-                        name="initial_balance" 
-                        type="number" 
-                        step="0.01"
-                        placeholder="0.00"
-                        value="{{ account ? account.initial_balance : '0.00' }}"
-                    >
+                <div class="grid grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label class="block text-gray-700 text-[10px] font-bold mb-2 uppercase tracking-widest" for="initial_balance">
+                            Solde initial
+                        </label>
+                        <input 
+                            class="shadow-none appearance-none border border-gray-300 w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:border-gray-500" 
+                            id="initial_balance" 
+                            name="initial_balance" 
+                            type="number" 
+                            step="0.01"
+                            placeholder="0.00"
+                            value="{{ account ? account.initial_balance : '0.00' }}"
+                        >
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-700 text-[10px] font-bold mb-2 uppercase tracking-widest" for="currency">
+                            Devise
+                        </label>
+                        <select 
+                            class="shadow-none appearance-none border border-gray-300 w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:border-gray-500" 
+                            id="currency" 
+                            name="currency"
+                        >
+                            <option value="EUR" {{ account and account.currency == 'EUR' ? 'selected' : '' }}>EUR (€)</option>
+                            <option value="USD" {{ account and account.currency == 'USD' ? 'selected' : '' }}>USD ($)</option>
+                            <option value="GBP" {{ account and account.currency == 'GBP' ? 'selected' : '' }}>GBP (£)</option>
+                            <option value="CHF" {{ account and account.currency == 'CHF' ? 'selected' : '' }}>CHF (Fr)</option>
+                        </select>
+                    </div>
                 </div>
 
-                <div>
-                    <label class="block text-gray-700 text-sm font-bold mb-2 uppercase" for="currency">
-                        Devise
+                <div class="mb-8">
+                    <label class="flex items-center cursor-pointer">
+                        <input 
+                            type="checkbox" 
+                            name="is_active" 
+                            value="1"
+                            {{ account and account.is_active == 1 or not account ? 'checked' : '' }}
+                            class="mr-3 h-4 w-4"
+                        >
+                        <span class="text-gray-700 text-[10px] font-bold uppercase tracking-widest">Compte actif</span>
                     </label>
-                    <select 
-                        class="shadow-none appearance-none border border-gray-300 w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:border-gray-500" 
-                        id="currency" 
-                        name="currency"
-                    >
-                        <option value="EUR" {{ account and account.currency == 'EUR' ? 'selected' : '' }}>EUR (€)</option>
-                        <option value="USD" {{ account and account.currency == 'USD' ? 'selected' : '' }}>USD ($)</option>
-                        <option value="GBP" {{ account and account.currency == 'GBP' ? 'selected' : '' }}>GBP (£)</option>
-                        <option value="CHF" {{ account and account.currency == 'CHF' ? 'selected' : '' }}>CHF (Fr)</option>
-                    </select>
                 </div>
-            </div>
-
-            <div class="mb-6">
-                <label class="flex items-center">
-                    <input 
-                        type="checkbox" 
-                        name="is_active" 
-                        value="1"
-                        {{ account and account.is_active == 1 or not account ? 'checked' : '' }}
-                        class="mr-2 h-4 w-4"
-                    >
-                    <span class="text-gray-700 text-sm font-bold uppercase">Compte actif</span>
-                </label>
-                <p class="text-xs text-gray-500 mt-1">Les comptes inactifs restent dans les calculs mais sont affichés en grisé</p>
-            </div>
 
             <div class="flex justify-end space-x-4">
-                <a href="/banks" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-8 focus:outline-none uppercase tracking-wider transition-colors duration-200">
+                <a href="/banks" class="btn btn-outline">
                     Annuler
                 </a>
-                <button class="bg-black hover:bg-gray-800 text-white font-bold py-3 px-8 focus:outline-none uppercase tracking-wider transition-colors duration-200" type="submit">
+                <button class="btn btn-primary px-10" type="submit">
                     {{ account ? 'Modifier' : 'Ajouter' }}
                 </button>
             </div>
