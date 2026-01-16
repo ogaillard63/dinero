@@ -29,6 +29,7 @@ class ApiController extends BaseController {
                 $account['current_balance'] = $account['initial_balance'] + ($account['transactions_total'] ?? 0);
                 unset($account['transactions_total']);
             }
+            unset($account);
             
             echo json_encode([
                 'success' => true,
@@ -121,9 +122,11 @@ class ApiController extends BaseController {
                     $account['current_balance'] = $account['initial_balance'] + ($account['transactions_total'] ?? 0);
                     unset($account['transactions_total']);
                 }
+                unset($account);
                 
                 $bank['accounts'] = $accounts;
             }
+            unset($bank);
             
             echo json_encode([
                 'success' => true,
@@ -249,6 +252,7 @@ class ApiController extends BaseController {
             $account['current_balance'] = $account['initial_balance'] + ($account['transactions_total'] ?? 0);
             unset($account['transactions_total']);
         }
+        unset($account);
         
         return $accounts;
     }
@@ -293,9 +297,11 @@ class ApiController extends BaseController {
                 $account['current_balance'] = $account['initial_balance'] + ($account['transactions_total'] ?? 0);
                 unset($account['transactions_total']);
             }
+            unset($account);
             
             $bank['accounts'] = $accounts;
         }
+        unset($bank);
         
         return $banks;
     }

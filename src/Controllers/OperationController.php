@@ -24,6 +24,7 @@ class OperationController extends BaseController {
             $transactions_total = $result['total'] ?? 0;
             $account['current_balance'] = $account['initial_balance'] + $transactions_total;
         }
+        unset($account);
         
         // If no account selected, use the first one
         if (!$selected_account_id && !empty($accounts)) {

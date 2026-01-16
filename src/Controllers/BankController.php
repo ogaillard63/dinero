@@ -28,9 +28,11 @@ class BankController extends BaseController {
                 $result = $stmt->fetch();
                 $account['transaction_count'] = $result['count'];
             }
+            unset($account);
             
             $bank['accounts'] = $accounts;
         }
+        unset($bank);
 
         $this->render('banks.twig', ['banks' => $banks]);
     }

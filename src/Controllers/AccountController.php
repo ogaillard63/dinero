@@ -21,6 +21,7 @@ class AccountController extends BaseController {
             $transactions_total = $result['total'] ?? 0;
             $account['current_balance'] = $account['initial_balance'] + $transactions_total;
         }
+        unset($account);
 
         $this->render('accounts_list.twig', [
             'accounts' => $accounts
